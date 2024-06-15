@@ -27,8 +27,10 @@ export default function RootLayout({
                     enableSystem
                     disableTransitionOnChange
                 >
-                    <TopBar />
-                    {children}
+                    <div className="px-4">
+                        <TopBar />
+                        {children}
+                    </div>
                 </ThemeProvider>
             </body>
         </html>

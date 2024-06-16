@@ -26,11 +26,9 @@ export default function ProjectTableToolbar<TData>({
             <div className="flex flex-1 items-center space-x-2">
                 <Input
                     placeholder="Filter projects..."
-                    onChange={(event) => {
-                        table
-                            .getColumn("name")
-                            ?.setFilterValue(event.target.value);
-                    }}
+                    onChange={(event) =>
+                        table.setGlobalFilter(event.target.value)
+                    }
                     className="h-8 w-[150px] lg:w-[250px]"
                 />
                 {table.getColumn("status") && (

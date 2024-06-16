@@ -51,6 +51,7 @@ export const columns: ColumnDef<Project>[] = [
                 {new Date(row.getValue("creation_date")).toLocaleDateString()}
             </div>
         ),
+        enableGlobalFilter: false,
     },
     {
         accessorKey: "status",
@@ -62,6 +63,7 @@ export const columns: ColumnDef<Project>[] = [
             </div>
         ),
         filterFn: (row, id, value) => value.includes(row.getValue(id)),
+        enableGlobalFilter: false,
     },
     {
         accessorKey: "energy_produced",
@@ -75,5 +77,6 @@ export const columns: ColumnDef<Project>[] = [
         ),
         sortingFn: (rowA, rowB, colId) =>
             Number(rowA.getValue(colId)) - Number(rowB.getValue(colId)),
+        enableGlobalFilter: false,
     },
 ];

@@ -30,7 +30,7 @@ export default function ProjectCollaborators({
                     </Avatar>
                 )}
             </div>
-            <Button variant="ghost" size="icon">
+            <Button variant="outline" size="icon">
                 <PlusIcon className="size-4" />
             </Button>
         </div>

@@ -41,8 +41,10 @@ export async function GET(_: NextRequest, { params: { id } }: Params) {
                 Investor_Invest_Project_T AS a
                 INNER JOIN User_T AS b ON a.i_user_id = b.user_id
             WHERE
-                project_id = '${id}';
-                
+                project_id = '${id}'
+            ORDER BY
+                investment_date DESC;
+
             --
 
             SELECT 

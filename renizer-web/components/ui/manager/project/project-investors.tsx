@@ -30,7 +30,8 @@ export default function ProjectInvestors({
                     </Avatar>
                 )}
             </div>
-            <Button variant="ghost" size="icon">
+            <Button variant="outline">View All</Button>
+            <Button variant="outline" size="icon">
                 <PlusIcon className="size-4" />
             </Button>
         </div>

@@ -23,6 +23,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import TasksTableToolbar from "./tasks-table-toolbar";
 import { TablePagination } from "@/components/ui/table-pagination";
 
 interface TasksTableProps<TData, TValue> {
@@ -62,6 +63,7 @@ export default function TasksTable<TData, TValue>({
 
     return (
         <div className="space-y-2">
+            <TasksTableToolbar table={table} />
             <Table>
                 <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (

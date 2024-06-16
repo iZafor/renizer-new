@@ -31,3 +31,13 @@ export function formatEnergyUnit(amount: number) {
     }
     return `${(amount / 1000000000).toFixed(4)} GWh`;
 }
+
+export function getInitial(name: string) {
+    if (typeof name !== "string" || !name) {
+        return "";
+    }
+    const parts = name.split(" ");
+    return parts.length > 1
+        ? parts[0][0] + parts[parts.length - 1][0]
+        : name.substring(0, 2);
+}

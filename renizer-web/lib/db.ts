@@ -8,4 +8,5 @@ export const pool = mysql.createPool({
     database: "REnizer_next",
     connectionLimit: 10,
     connectTimeout: 60000,
+    multipleStatements: true,
 });

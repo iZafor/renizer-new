@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
+import Providers from "@/components/providers";
 import TopBar from "@/components/ui/top-bar";
 
 const roboto = Roboto({
@@ -21,17 +21,12 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={roboto.className}>
-                <ThemeProvider
-                    attribute="class"
-                    defaultTheme="dark"
-                    enableSystem
-                    disableTransitionOnChange
-                >
+                <Providers>
                     <div className="px-4">
                         <TopBar />
-                        {children}
+                        <div className="mt-4">{children}</div>
                     </div>
-                </ThemeProvider>
+                </Providers>
             </body>
         </html>
     );

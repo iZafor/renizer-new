@@ -1,15 +1,17 @@
-import { ProjectCollaboration, ProjectInvestment } from "@/lib/definitions";
+import { InvestorDetails, ProjectCollaboration, ProjectInvestment } from "@/lib/definitions";
 import ProjectCollaborators from "./project-collaborators";
 import ProjectInvestors from "./project-investors";
 import { Tabs, TabsTrigger, TabsContent, TabsList } from "@/components/ui/tabs";
 
 interface ProjectStakeHoldersProps {
     collaborations: ProjectCollaboration[];
+    investors: InvestorDetails[],
     investments: ProjectInvestment[];
 }
 
 export default function ProjectStakeHolders({
     collaborations,
+    investors,
     investments,
 }: ProjectStakeHoldersProps) {
     return (
@@ -22,7 +24,7 @@ export default function ProjectStakeHolders({
                 <ProjectCollaborators collaborations={collaborations} />
             </TabsContent>
             <TabsContent value="investors">
-                <ProjectInvestors investments={investments} />
+                <ProjectInvestors investors={investors} investments={investments} />
             </TabsContent>
         </Tabs>
     );

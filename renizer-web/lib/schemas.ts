@@ -50,3 +50,23 @@ export const UpdateSoldEnergyFormSchema = z.object({
         })
         .default(0),
 });
+
+export type InvestmentProposalFormState =
+    | {
+          errors?: {
+              investor?: string[];
+              amount?: string[];
+          };
+          message?: string;
+          newProject?: Project;
+      }
+    | undefined;
+
+export const InvestmentProposalFormSchema = z.object({
+    investor: z.string().length(36, {
+        message: "Investor must be selected."
+    }),
+    amount: z.number().min(1, {
+        message: "Amount must be greater than 0."
+    })
+});

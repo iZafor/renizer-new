@@ -9,6 +9,8 @@ import {
     AlertCircle,
     CircleDashed,
     CheckCircle,
+    Building,
+    User,
 } from "lucide-react";
 
 export const statuses = [
@@ -73,4 +75,17 @@ export const investmentProposalStatuses = [
         label: "Rejected",
         icon: CircleX,
     },
+];
+
+export const investorTypes = [
+    {
+        value: "Individual",
+        label: "Individual",
+        icon: User,
+    },
+    {
+        value: "Corporate",
+        label: "Corporate",
+        icon: Building,
+    }
 ];

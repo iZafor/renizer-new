@@ -8,6 +8,14 @@ export interface Project {
     creation_date: string;
 }
 
+export interface InvestorDetails {
+    i_user_id: string;
+    investor: string;
+    investor_type: string;
+    total_investment: string;
+    invested_in_projects: string;
+}
+
 export interface ProjectDetails {
     project_id: string;
     name: string;

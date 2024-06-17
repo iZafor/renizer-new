@@ -1,20 +1,22 @@
 "use client";
 
-import { ProjectInvestment } from "@/lib/definitions";
+import { InvestorDetails, ProjectInvestment } from "@/lib/definitions";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { getInitial } from "@/lib/utils";
-import { PlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { columns } from "@/components/ui/manager/project/investment-table/columns";
 import InvestmentTable from "@/components/ui/manager/project/investment-table/investment-table";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import { useEffect, useState } from "react";
+import InvestmentProposalDialog from "@/components/ui/manager/project/investment-proposal-dialog";
 
 interface ProjectInvestorsProps {
+    investors: InvestorDetails[];
     investments: ProjectInvestment[];
 }
 
 export default function ProjectInvestors({
+    investors,
     investments,
 }: ProjectInvestorsProps) {
     const [uniqueInvestors, setUniqueInvestors] = useState<string[]>([]);
@@ -52,9 +54,7 @@ export default function ProjectInvestors({
                     <InvestmentTable data={investments} columns={columns} />
                 </DialogContent>
             </Dialog>
-            <Button variant="outline" size="icon">
-                <PlusIcon className="size-4" />
-            </Button>
+            <InvestmentProposalDialog investors={investors} />
         </div>
     );
 }

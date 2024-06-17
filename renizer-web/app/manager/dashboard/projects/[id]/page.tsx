@@ -1,6 +1,7 @@
 "use client";
 
 import {
+    InvestorDetails,
     ProjectCollaboration,
     ProjectDetails,
     ProjectInvestment,
@@ -40,6 +41,7 @@ export default function Project({ params: { id } }: ProjectProps) {
     const [collaborations, setCollaborations] = useState<
         ProjectCollaboration[]
     >([]);
+    const [investors, setInvestors] = useState<InvestorDetails[]>([]);
     const [investments, setInvestments] = useState<ProjectInvestment[]>([]);
     const [tasks, setTasks] = useState<ProjectTask[]>([]);
 
@@ -47,8 +49,9 @@ export default function Project({ params: { id } }: ProjectProps) {
         if (data) {
             setProject(data[0][0]);
             setCollaborations(data[1]);
-            setInvestments(data[2]);
-            setTasks(data[3]);
+            setInvestors(data[2]);
+            setInvestments(data[3]);
+            setTasks(data[4]);
         }
     }, [data]);
 
@@ -66,6 +69,7 @@ export default function Project({ params: { id } }: ProjectProps) {
                 <ProjectInfo project={project} />
                 <ProjectStakeHolders
                     collaborations={collaborations}
+                    investors={investors}
                     investments={investments}
                 />
                 <TasksTable data={tasks} columns={columns} />

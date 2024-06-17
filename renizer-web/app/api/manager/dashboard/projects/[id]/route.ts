@@ -13,6 +13,7 @@ export async function GET(_: NextRequest, { params: { id } }: Params) {
         const queryRes = await pool
             .query<RowDataPacket[][]>(
                 `
+            -- ProjectDetails
             SELECT 
                 a.project_id, name, description, location, start_date, end_date, status, energy_rate_kwh AS energy_rate, produced_energy_kwh AS energy_produced, energy_sold_kwh AS energy_sold, total_cost, org_restricted, m_p_user_id, creation_date, SUM(investment_amount) AS investment_received
             FROM 
@@ -20,8 +21,8 @@ export async function GET(_: NextRequest, { params: { id } }: Params) {
                 INNER JOIN Investor_Invest_Project_T AS b ON a.project_id = b.project_id
             WHERE 
                 a.project_id = '${id}';
-            --
 
+            -- ProjectCollaboration[]
             SELECT 
                 a.p_user_id, CONCAT(first_name, ' ', last_name) AS contributor, a.project_id, start_date, end_date, role, GROUP_CONCAT(c.task_name ORDER BY c.task_name SEPARATOR ',') AS tasks
             FROM 
@@ -33,8 +34,19 @@ export async function GET(_: NextRequest, { params: { id } }: Params) {
             GROUP BY
                 a.p_user_id, role, contributor, a.project_id, start_date, end_date;
 
-            --
+            -- InvestorDetails[]
+            SELECT
+                a.i_user_id, CONCAT(first_name, ' ', last_name) AS investor, investor_type, SUM(investment_amount) AS total_investment, COUNT(investment_amount) AS invested_in_projects
+            FROM 
+                Investor_T AS a
+                INNER JOIN User_T AS b ON a.i_user_id = b.user_id
+                INNER JOIN Investor_Invest_Project_T AS c ON a.i_user_id = c.i_user_id
+            GROUP BY
+                a.i_user_id, investor, investor_type
+            ORDER BY 
+                total_investment DESC;
 
+            -- ProjectInvestment[]
             SELECT 
                 a.i_user_id, CONCAT(first_name, ' ', last_name) AS investor, a.project_id, a.investment_amount, proposal_date, investment_date, proposal_status
             FROM 
@@ -46,8 +58,7 @@ export async function GET(_: NextRequest, { params: { id } }: Params) {
             ORDER BY
                 investment_date DESC;
 
-            --
-
+            -- ProjectTask[]
             SELECT 
                 project_id, p_user_id, CONCAT(first_name, ' ', last_name) AS assignee, task_name AS task, status, assigned_date, expected_hour, expected_delivery_date, hour_taken, delivery_date, priority
             FROM 

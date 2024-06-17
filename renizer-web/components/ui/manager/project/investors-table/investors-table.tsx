@@ -23,19 +23,22 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import InvestmentTableToolbar from "./investment-table-toolbar";
+import InvestorsTableToolbar from "./investors-table-toolbar";
 import { TablePagination } from "@/components/ui/table-pagination";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { InvestorDetails } from "@/lib/definitions";
 
-interface InvestmentTableProps<TData, TValue> {
+interface InvestorsTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
+    onSelect: (investor: InvestorDetails) => void;
 }
 
-export default function InvestmentTable<TData, TValue>({
+export default function InvestorsTable<TData, TValue>({
     columns,
     data,
-}: InvestmentTableProps<TData, TValue>) {
+    onSelect,
+}: InvestorsTableProps<TData, TValue>) {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [pagination, setPagination] = useState<PaginationState>({
@@ -63,9 +66,9 @@ export default function InvestmentTable<TData, TValue>({
     });
 
     return (
-        <div className="space-y-2 mt-4">
-            <InvestmentTableToolbar table={table} />
-            <ScrollArea className="max-h-[38.5rem]">
+        <div className="space-y-2">
+            <InvestorsTableToolbar table={table} />
+            <ScrollArea className="max-h-[20rem]">
                 <div>
                     <Table>
                         <TableHeader>
@@ -94,6 +97,12 @@ export default function InvestmentTable<TData, TValue>({
                                         key={row.id}
                                         data-state={
                                             row.getIsSelected() && "selected"
+                                        }
+                                        className="cursor-pointer"
+                                        onClick={() =>
+                                            onSelect(
+                                                row.original as InvestorDetails
+                                            )
                                         }
                                     >
                                         {row.getVisibleCells().map((cell) => (

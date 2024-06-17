@@ -51,7 +51,9 @@ export interface ProjectCollaboration {
     start_date?: string;
     end_date?: string;
     role: string;
-    tasks: string;
+    total_assigned_tasks: string;
+    tasks_in_progress: string;
+    tasks_completed: string;
 }
 
 export interface ProjectTask {

@@ -6,6 +6,9 @@ import { getInitial } from "@/lib/utils";
 import { PlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
+import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
+import CollaborationTable from "@/components/ui/manager/project/collaboration-table/collaboration-table";
+import { columns } from "@/components/ui/manager/project/collaboration-table/columns";
 
 interface ProjectCollaboratorsProps {
     collaborations: ProjectCollaboration[];
@@ -41,6 +44,17 @@ export default function ProjectCollaborators({
                     </Avatar>
                 )}
             </div>
+            <Dialog>
+                <DialogTrigger>
+                    <Button variant="outline">View All</Button>
+                </DialogTrigger>
+                <DialogContent className="min-w-[70rem]">
+                    <CollaborationTable
+                        data={collaborations}
+                        columns={columns}
+                    />
+                </DialogContent>
+            </Dialog>
             <Button variant="outline" size="icon">
                 <PlusIcon className="size-4" />
             </Button>

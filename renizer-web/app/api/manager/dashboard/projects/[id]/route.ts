@@ -24,19 +24,33 @@ export async function GET(_: NextRequest, { params: { id } }: Params) {
 
             -- ProjectCollaboration[]
             SELECT 
-                a.p_user_id, CONCAT(first_name, ' ', last_name) AS contributor, a.project_id, start_date, end_date, role, GROUP_CONCAT(c.task_name ORDER BY c.task_name SEPARATOR ',') AS tasks
+                a.p_user_id, CONCAT(first_name, ' ', last_name) AS contributor, a.project_id, start_date, end_date, role, COUNT(c.task_name) AS total_assigned_tasks, tasks_in_progress, tasks_completed
             FROM 
                 Collaboration_T AS a 
                 INNER JOIN User_T AS b ON a.p_user_id = b.user_id
                 INNER JOIN Collaboration_Task_T AS c ON a.p_user_id = c.p_user_id AND a.project_id = c.project_id
+                LEFT JOIN (
+                    SELECT project_id, p_user_id, COUNT(task_name) AS tasks_in_progress 
+                    FROM Collaboration_Task_T
+                    WHERE status = "In Progress"
+                    GROUP BY p_user_id, project_id
+                ) AS dt1 ON a.p_user_id = dt1.p_user_id AND a.project_id = dt1.project_id 
+                LEFT JOIN (
+                    SELECT project_id, p_user_id, COUNT(task_name) AS tasks_completed 
+                    FROM Collaboration_Task_T
+                    WHERE status = "Done"
+                    GROUP BY p_user_id, project_id
+                ) AS dt2 ON a.p_user_id = dt2.p_user_id AND a.project_id = dt2.project_id
             WHERE 
                 a.project_id = '${id}'
             GROUP BY
-                a.p_user_id, role, contributor, a.project_id, start_date, end_date;
+                a.p_user_id, role, contributor, a.project_id, start_date, end_date, tasks_in_progress, tasks_completed
+            ORDER BY
+                start_date DESC;
 
             -- InvestorDetails[]
             SELECT
-                a.i_user_id, CONCAT(first_name, ' ', last_name) AS investor, investor_type, SUM(investment_amount) AS total_investment, COUNT(investment_amount) AS invested_in_projects
+                a.i_user_id, CONCAT(first_name, ' ', last_name) AS investor, investor_type, SUM(investment_amount) AS total_investment, COUNT(DISTINCT(project_id)) AS invested_in_projects
             FROM 
                 Investor_T AS a
                 INNER JOIN User_T AS b ON a.i_user_id = b.user_id

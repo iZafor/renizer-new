@@ -31,7 +31,9 @@ export interface ProjectInvestment {
     investor: string;
     project_id: string;
     investment_amount: string;
+    proposal_date: string;
     investment_date: string;
+    proposal_status: string;
 }
 
 export interface ProjectCollaboration {

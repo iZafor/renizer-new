@@ -3,6 +3,7 @@ import { ProjectInvestment } from "@/lib/definitions";
 import { TableHeader } from "@/components/ui/table-header";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { getInitial } from "@/lib/utils";
+import { StatusIcon } from "@/components/ui/icons";
 
 export const columns: ColumnDef<ProjectInvestment>[] = [
     {
@@ -39,13 +40,13 @@ export const columns: ColumnDef<ProjectInvestment>[] = [
                 .includes(value.toLowerCase()),
     },
     {
-        accessorKey: "investment_date",
+        accessorKey: "proposal_date",
         header: ({ column }) => (
-            <TableHeader column={column} title="Investment Date" />
+            <TableHeader column={column} title="Proposal Date" />
         ),
         cell: ({ row }) => (
             <div>
-                {new Date(row.getValue("investment_date")).toLocaleDateString(
+                {new Date(row.getValue("proposal_date")).toLocaleDateString(
                     "en-us",
                     {
                         year: "numeric",
@@ -55,6 +56,40 @@ export const columns: ColumnDef<ProjectInvestment>[] = [
                 )}
             </div>
         ),
+        enableGlobalFilter: false,
+    },
+    {
+        accessorKey: "investment_date",
+        header: ({ column }) => (
+            <TableHeader column={column} title="Investment Date" />
+        ),
+        cell: ({ row }) => (
+            <div>
+                {row.getValue("investment_date")
+                    ? new Date(
+                          row.getValue("investment_date")
+                      ).toLocaleDateString("en-us", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                      })
+                    : ""}
+            </div>
+        ),
+        enableGlobalFilter: false,
+    },
+    {
+        accessorKey: "proposal_status",
+        header: ({ column }) => (
+            <TableHeader column={column} title="Proposal Status" />
+        ),
+        cell: ({ row }) => (
+            <div className="flex items-center gap-2">
+                <StatusIcon status={row.getValue("proposal_status")} />
+                <p>{row.getValue("proposal_status")}</p>
+            </div>
+        ),
+        filterFn: (row, id, value) => value.includes(row.getValue(id)),
         enableGlobalFilter: false,
     },
 ];

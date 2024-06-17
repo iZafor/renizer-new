@@ -36,12 +36,13 @@ export async function GET(_: NextRequest, { params: { id } }: Params) {
             --
 
             SELECT 
-                i_user_id, CONCAT(first_name, ' ', last_name) AS investor, project_id, investment_amount, investment_date
+                a.i_user_id, CONCAT(first_name, ' ', last_name) AS investor, a.project_id, a.investment_amount, proposal_date, investment_date, proposal_status
             FROM 
-                Investor_Invest_Project_T AS a
+                Investment_Proposal_T AS a
                 INNER JOIN User_T AS b ON a.i_user_id = b.user_id
+                LEFT JOIN Investor_Invest_Project_T AS c ON a.i_user_id = c.i_user_id AND a.project_id = c.project_id AND a.investment_amount = c.investment_amount
             WHERE
-                project_id = '${id}'
+                a.project_id = '${id}'
             ORDER BY
                 investment_date DESC;
 

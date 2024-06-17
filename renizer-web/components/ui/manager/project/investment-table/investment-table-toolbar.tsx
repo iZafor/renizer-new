@@ -5,6 +5,8 @@ import { Table } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TableColumnViewOptions } from "@/components/ui/table-column-view-options";
+import { TableFacetedFilter } from "@/components/ui/table-faceted-filter";
+import { investmentProposalStatuses } from "@/lib/data";
 
 interface InvestmentTableToolbarProps<TData> {
     table: Table<TData>;
@@ -27,6 +29,13 @@ export default function InvestmentTableToolbar<TData>({
                     }}
                     className="h-8 w-[150px] lg:w-[250px]"
                 />
+                {table.getColumn("proposal_status") && (
+                    <TableFacetedFilter
+                        column={table.getColumn("proposal_status")}
+                        title="Status"
+                        options={investmentProposalStatuses}
+                    />
+                )}
                 {isFiltered && (
                     <Button
                         variant="ghost"

@@ -7,6 +7,8 @@ import {
     ArrowDown,
     ArrowRight,
     AlertCircle,
+    CircleDashed,
+    CheckCircle,
 } from "lucide-react";
 
 export const statuses = [
@@ -52,5 +54,23 @@ export const priorities = [
         value: "Low",
         label: "Low",
         icon: ArrowDown,
+    },
+];
+
+export const investmentProposalStatuses = [
+    {
+        value: "Pending",
+        label: "Pending",
+        icon: CircleDashed,
+    },
+    {
+        value: "Approved",
+        label: "Approved",
+        icon: CheckCircle,
+    },
+    {
+        value: "Rejected",
+        label: "Rejected",
+        icon: CircleX,
     },
 ];

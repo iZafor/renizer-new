@@ -8,6 +8,8 @@ import {
     ArrowDown,
     ArrowRight,
     AlertCircle,
+    CircleDashed,
+    CheckCircle,
 } from "lucide-react";
 
 export function StatusIcon({
@@ -28,6 +30,12 @@ export function StatusIcon({
             return <CircleEllipsis className={cn("h-4 w-4", className)} />;
         case "Overdue":
             return <AlertCircle className={cn("h-4 w-4", className)} />;
+        case "Pending":
+            return <CircleDashed className={cn("h-4 w-4", className)} />;
+        case "Approved":
+            return <CheckCircle className={cn("h-4 w-4", className)} />;
+        case "Rejected":
+            return <CircleX className={cn("h-4 w-4", className)} />;
     }
 }
 

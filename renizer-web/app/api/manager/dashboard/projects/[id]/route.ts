@@ -87,11 +87,13 @@ export async function GET(_: NextRequest, { params: { id } }: Params) {
 
             -- ProjectTask[]
             SELECT 
-                project_id, p_user_id, CONCAT(first_name, ' ', last_name) AS assignee, task_name AS task, status, assigned_date, expected_hour, expected_delivery_date, hour_taken, delivery_date, priority
+                a.project_id, a.p_user_id, CONCAT(first_name, ' ', last_name) AS assignee, role, task_name AS task, status, assigned_date, expected_hour, expected_delivery_date, hour_taken, delivery_date, priority
             FROM 
-                Collaboration_Task_T AS a INNER JOIN User_T AS b ON a.p_user_id = b.user_id
+                Collaboration_Task_T AS a 
+                INNER JOIN User_T AS b ON a.p_user_id = b.user_id
+                INNER JOIN Collaboration_T AS c ON a.p_user_id = c.p_user_id AND a.project_id = c.project_id
             WHERE 
-                project_id = '${id}';
+                a.project_id = '${id}';
             `
             )
             .then(([rows, _]) => rows);

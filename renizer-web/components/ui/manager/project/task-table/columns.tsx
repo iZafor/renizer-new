@@ -4,6 +4,7 @@ import { TableHeader } from "@/components/ui/table-header";
 import { PriorityIcon, StatusIcon } from "@/components/ui/icons";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { getInitial } from "@/lib/utils";
+import TaskDetails from "./task-details";
 
 export const columns: ColumnDef<ProjectTask>[] = [
     {
@@ -82,5 +83,9 @@ export const columns: ColumnDef<ProjectTask>[] = [
                 })}
             </div>
         ),
+    },
+    {
+        id: "actions",
+        cell: ({ row }) => <TaskDetails task={row.original} />,
     },
 ];

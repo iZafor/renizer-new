@@ -68,6 +68,7 @@ export interface ProjectTask {
     project_id: string;
     p_user_id: string;
     assignee: string;
+    role: string;
     task: string;
     status: string;
     assigned_date: string;

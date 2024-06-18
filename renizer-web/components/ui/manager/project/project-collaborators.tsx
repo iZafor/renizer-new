@@ -3,7 +3,6 @@
 import { CollaboratorDetails, ProjectCollaboration } from "@/lib/definitions";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { getInitial } from "@/lib/utils";
-import { PlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";

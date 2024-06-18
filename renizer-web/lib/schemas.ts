@@ -84,7 +84,7 @@ export const NewCollaboratorFormSchema = z.object({
     contributor: z.string().length(36, {
         message: "Contributor must be selected."
     }),
-    role: z.number().min(1, {
+    role: z.string().min(1, {
         message: "Role cannot be empty."
     })
 });

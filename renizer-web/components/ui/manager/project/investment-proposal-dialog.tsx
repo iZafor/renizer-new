@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import InvestorsTable from "@/components/ui/manager/project/investors-table/investors-table";
 import { columns } from "@/components/ui/manager/project/investors-table/columns";
 import { useFormState } from "react-dom";
-import { proposeInvestment } from "./investors-table/actions";
+import { proposeInvestment } from "@/lib/actions/project/actions";
 import { cn } from "@/lib/utils";
 
 interface InvestmentProposalDialogProps {
@@ -100,7 +100,7 @@ export default function InvestmentProposalDialog({
                         >
                             Amount
                         </Label>
-                        <Input id="amount" name="amount" autoComplete="off"/>
+                        <Input id="amount" name="amount" autoComplete="off" />
                         {state?.errors?.amount && (
                             <p className="text-sm text-destructive font-semibold">
                                 {state.errors.amount}

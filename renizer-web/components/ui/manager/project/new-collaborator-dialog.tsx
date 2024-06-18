@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import CollaboratorsTable from "@/components/ui/manager/project/collaborators-table/collaborators-table";
 import { columns } from "@/components/ui/manager/project/collaborators-table/columns";
 import { useFormState } from "react-dom";
-import { addNewCollaborator } from "./actions";
+import { addNewCollaborator } from "@/lib/actions/project/actions";
 import { cn } from "@/lib/utils";
 
 interface NewCollaboratorDialogProps {

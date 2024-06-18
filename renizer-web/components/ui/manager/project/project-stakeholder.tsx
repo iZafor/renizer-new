@@ -9,6 +9,7 @@ import ProjectInvestors from "./project-investors";
 import { Tabs, TabsTrigger, TabsContent, TabsList } from "@/components/ui/tabs";
 
 interface ProjectStakeHoldersProps {
+    project_id: string;
     collaborators: CollaboratorDetails[];
     collaborations: ProjectCollaboration[];
     investors: InvestorDetails[];
@@ -16,6 +17,7 @@ interface ProjectStakeHoldersProps {
 }
 
 export default function ProjectStakeHolders({
+    project_id,
     collaborators,
     collaborations,
     investors,
@@ -29,6 +31,7 @@ export default function ProjectStakeHolders({
             </TabsList>
             <TabsContent value="contributors">
                 <ProjectCollaborators
+                    project_id={project_id}
                     collaborators={collaborators}
                     collaborations={collaborations}
                 />

@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronsUpDown, PlusIcon } from "lucide-react";
+import { AlertCircle, ChevronsUpDown, CircleCheck, PlusIcon, TriangleAlert } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
@@ -17,12 +17,15 @@ import { columns } from "@/components/ui/manager/project/collaborators-table/col
 import { useFormState } from "react-dom";
 import { addNewCollaborator } from "@/lib/actions/project/actions";
 import { cn } from "@/lib/utils";
+import { getMatchingRoles } from "@/lib/apis/project/apis";
 
 interface NewCollaboratorDialogProps {
+    project_id: string;
     collaborators: CollaboratorDetails[];
 }
 
 export default function NewCollaboratorDialog({
+    project_id,
     collaborators,
 }: NewCollaboratorDialogProps) {
     const [selectedContributor, setSelectedContributor] =
@@ -30,6 +33,8 @@ export default function NewCollaboratorDialog({
     const [open, setOpen] = useState(false);
     const [contributor, setContributor] = useState("");
     const [value, setValue] = useState("");
+    const [role, setRole] = useState("");
+    const [roleExists, setRoleExists] = useState(false);
     const [state, action] = useFormState(addNewCollaborator, undefined);
 
     useEffect(() => {
@@ -42,12 +47,12 @@ export default function NewCollaboratorDialog({
         <Dialog>
             <DialogTrigger asChild>
                 <Button variant="outline" size="icon">
-                    <PlusIcon className="size-4" />
+                    <PlusIcon className="size-[1.25rem]" />
                 </Button>
             </DialogTrigger>
             <DialogContent>
                 <h3 className="text-xl font-bold">Propose investment</h3>
-                <form className="space-y-4 mt-4" action={action}>
+                <form className="space-y-[1.25rem] mt-[1.25rem]" action={action}>
                     <div className="space-y-1.5">
                         <Label
                             className={cn("font-semibold", {
@@ -70,7 +75,7 @@ export default function NewCollaboratorDialog({
                                         {value
                                             ? value
                                             : "Select contributor..."}
-                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                        <ChevronsUpDown className="ml-2 h-[1.25rem] w-[1.25rem] shrink-0 opacity-50" />
                                     </Button>
                                 </PopoverTrigger>
                                 <PopoverContent
@@ -107,14 +112,45 @@ export default function NewCollaboratorDialog({
                         >
                             Role
                         </Label>
-                        <Input id="role" name="role" autoComplete="off" />
-                        {state?.errors?.role && (
+                        <Input
+                            id="role"
+                            name="role"
+                            autoComplete="off"
+                            onChange={(ev) => {
+                                const newRole = ev.currentTarget.value;
+                                setTimeout(async () => {
+                                    const res = await getMatchingRoles(
+                                        project_id,
+                                        newRole
+                                    );
+                                    setRoleExists(res.length > 0);
+                                }, 200);
+                                setRole(newRole);
+                            }}
+                        />
+                        {!roleExists && !role && state?.errors?.role && (
                             <p className="text-sm text-destructive font-semibold">
                                 {state.errors.role}
                             </p>
                         )}
+                        {role &&
+                            (roleExists ? (
+                                <div className="flex items-center space-x-1.5">
+                                    <TriangleAlert className="size-[1.25rem] fill-destructive stroke-background" />
+                                    <p className="text-sm text-destructive font-semibold">
+                                        {role} already exits.
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="flex items-center space-x-1.5">
+                                    <CircleCheck className="size-[1.25rem] fill-green-500 stroke-background" />
+                                    <p className="text-sm text-green-500 font-semibold">
+                                        {role} is available.
+                                    </p>
+                                </div>
+                            ))}
                     </div>
-                    <Button>Submit</Button>
+                    <Button disabled={roleExists}>Submit</Button>
                 </form>
             </DialogContent>
         </Dialog>

@@ -42,6 +42,8 @@ export async function addNewCollaborator(
         };
     }
 
+    // TODO: check for pre-existence of role
+
     console.log(validatedData.data);
 
     return { message: "success" };

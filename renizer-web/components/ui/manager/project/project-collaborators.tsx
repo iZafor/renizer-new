@@ -11,11 +11,13 @@ import { columns } from "@/components/ui/manager/project/collaboration-table/col
 import NewCollaboratorDialog from "./new-collaborator-dialog";
 
 interface ProjectCollaboratorsProps {
+    project_id: string;
     collaborators: CollaboratorDetails[];
     collaborations: ProjectCollaboration[];
 }
 
 export default function ProjectCollaborators({
+    project_id,
     collaborators,
     collaborations,
 }: ProjectCollaboratorsProps) {
@@ -47,7 +49,7 @@ export default function ProjectCollaborators({
                 )}
             </div>
             <Dialog>
-                <DialogTrigger>
+                <DialogTrigger asChild>
                     <Button variant="outline">View All</Button>
                 </DialogTrigger>
                 <DialogContent className="min-w-[70rem]">
@@ -57,7 +59,7 @@ export default function ProjectCollaborators({
                     />
                 </DialogContent>
             </Dialog>
-            <NewCollaboratorDialog collaborators={collaborators}/>
+            <NewCollaboratorDialog project_id={project_id} collaborators={collaborators}/>
         </div>
     );
 }

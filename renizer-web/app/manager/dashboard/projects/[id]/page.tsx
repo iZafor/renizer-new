@@ -71,6 +71,7 @@ export default function Project({ params: { id } }: ProjectProps) {
             <CardContent className="space-y-4">
                 <ProjectInfo project={project} />
                 <ProjectStakeHolders
+                    project_id={id}
                     collaborators={collaborators}
                     collaborations={collaborations}
                     investors={investors}

@@ -1,6 +1,6 @@
 "use client";
 
-import { ProjectCollaboration } from "@/lib/definitions";
+import { CollaboratorDetails, ProjectCollaboration } from "@/lib/definitions";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { getInitial } from "@/lib/utils";
 import { PlusIcon } from "lucide-react";
@@ -9,12 +9,15 @@ import { useEffect, useState } from "react";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import CollaborationTable from "@/components/ui/manager/project/collaboration-table/collaboration-table";
 import { columns } from "@/components/ui/manager/project/collaboration-table/columns";
+import NewCollaboratorDialog from "./new-collaborator-dialog";
 
 interface ProjectCollaboratorsProps {
+    collaborators: CollaboratorDetails[];
     collaborations: ProjectCollaboration[];
 }
 
 export default function ProjectCollaborators({
+    collaborators,
     collaborations,
 }: ProjectCollaboratorsProps) {
     const [uniqueContributors, setUniqueContributors] = useState<string[]>([]);
@@ -55,9 +58,7 @@ export default function ProjectCollaborators({
                     />
                 </DialogContent>
             </Dialog>
-            <Button variant="outline" size="icon">
-                <PlusIcon className="size-4" />
-            </Button>
+            <NewCollaboratorDialog collaborators={collaborators}/>
         </div>
     );
 }

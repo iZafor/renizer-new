@@ -16,6 +16,14 @@ export interface InvestorDetails {
     invested_in_projects: string;
 }
 
+export interface CollaboratorDetails {
+    c_p_user_id: string;
+    name: string;
+    working_department: string;
+    hourly_rate: string;
+    working_experience: string;
+}
+
 export interface ProjectDetails {
     project_id: string;
     name: string;

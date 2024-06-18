@@ -1,6 +1,7 @@
 "use client";
 
 import {
+    CollaboratorDetails,
     InvestorDetails,
     ProjectCollaboration,
     ProjectDetails,
@@ -38,6 +39,7 @@ export default function Project({ params: { id } }: ProjectProps) {
     const { data, isLoading } = useQuery(["project", id], () => fetchData(id));
 
     const [project, setProject] = useState<ProjectDetails>();
+    const [collaborators, setCollaborators] = useState<CollaboratorDetails[]>([]);
     const [collaborations, setCollaborations] = useState<
         ProjectCollaboration[]
     >([]);
@@ -48,10 +50,11 @@ export default function Project({ params: { id } }: ProjectProps) {
     useEffect(() => {
         if (data) {
             setProject(data[0][0]);
-            setCollaborations(data[1]);
-            setInvestors(data[2]);
-            setInvestments(data[3]);
-            setTasks(data[4]);
+            setCollaborators(data[1]);
+            setCollaborations(data[2]);
+            setInvestors(data[3]);
+            setInvestments(data[4]);
+            setTasks(data[5]);
         }
     }, [data]);
 
@@ -68,6 +71,7 @@ export default function Project({ params: { id } }: ProjectProps) {
             <CardContent className="space-y-4">
                 <ProjectInfo project={project} />
                 <ProjectStakeHolders
+                    collaborators={collaborators}
                     collaborations={collaborations}
                     investors={investors}
                     investments={investments}

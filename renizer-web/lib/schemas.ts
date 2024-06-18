@@ -58,7 +58,6 @@ export type InvestmentProposalFormState =
               amount?: string[];
           };
           message?: string;
-          newProject?: Project;
       }
     | undefined;
 
@@ -68,5 +67,24 @@ export const InvestmentProposalFormSchema = z.object({
     }),
     amount: z.number().min(1, {
         message: "Amount must be greater than 0."
+    })
+});
+
+export type NewCollaboratorFormState =
+    | {
+          errors?: {
+              contributor?: string[];
+              role?: string[];
+          };
+          message?: string;
+      }
+    | undefined;
+
+export const NewCollaboratorFormSchema = z.object({
+    contributor: z.string().length(36, {
+        message: "Contributor must be selected."
+    }),
+    role: z.number().min(1, {
+        message: "Role cannot be empty."
     })
 });

@@ -22,6 +22,19 @@ export async function GET(_: NextRequest, { params: { id } }: Params) {
             WHERE 
                 a.project_id = '${id}';
 
+            -- CollaboratorDetails[]
+            SELECT
+                c_p_user_id, CONCAT(first_name, ' ', last_name) AS name, working_department, hourly_rate, working_experience
+            FROM 
+                Project_Contributor_T AS a
+                INNER JOIN User_T AS b ON a.c_p_user_id = b.user_id
+                INNER JOIN Project_Associate_T As c ON a.c_p_user_id = c.p_user_id
+                WHERE c_p_user_id NOT IN (
+                    SELECT DISTINCT(p_user_id)
+                    FROM Collaboration_T
+                    WHERE project_id = '${id}'
+                );
+
             -- ProjectCollaboration[]
             SELECT 
                 a.p_user_id, CONCAT(first_name, ' ', last_name) AS contributor, a.project_id, start_date, end_date, role, COUNT(c.task_name) AS total_assigned_tasks, tasks_in_progress, tasks_completed

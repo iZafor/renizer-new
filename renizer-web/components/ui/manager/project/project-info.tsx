@@ -1,5 +1,6 @@
 import { ProjectDetails } from "@/lib/definitions";
 import { cn, formatEnergyUnit } from "@/lib/utils";
+import { format } from "date-fns";
 
 export default function ProjectInfo({
     project,
@@ -10,34 +11,20 @@ export default function ProjectInfo({
         <div className="grid grid-cols-2 gap-4">
             <InfoContainer
                 title="Creation Date"
-                data={new Date(project?.creation_date || "").toLocaleDateString(
-                    "en-us",
-                    {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                    }
-                )}
+                data={format(project?.creation_date || "", "PP")}
             />
             <InfoContainer
                 title="Project Started at"
                 data={
                     project?.start_date
-                        ? new Date(project.start_date).toLocaleDateString(
-                              "en-us",
-                              {
-                                  year: "numeric",
-                                  month: "short",
-                                  day: "numeric",
-                              }
-                          )
+                        ? format(project.start_date, "PP")
                         : "Not Started Yet"
                 }
             />
             <InfoContainer
                 title="Current Energy Rate"
                 data={`$${project?.energy_rate}`}
-            />{" "}
+            />
             <InfoContainer
                 title="Investment Received"
                 data={`$${project?.investment_received}`}

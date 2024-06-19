@@ -1,20 +1,41 @@
 "use client";
 
 import {
+    isServer,
     QueryClient,
     QueryClientProvider,
-} from "react-query";
+} from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ThemeProvider } from "./theme-provider";
 
-const client = new QueryClient();
+function makeQueryClient() {
+    return new QueryClient({
+        defaultOptions: {
+            queries: {
+                staleTime: 60000,
+            },
+        },
+    });
+}
+
+let browserQueryClient: QueryClient | undefined = undefined;
+
+function getQueryClient() {
+    if (isServer) {
+        return makeQueryClient();
+    } else {
+        if (!browserQueryClient) browserQueryClient = makeQueryClient();
+        return browserQueryClient;
+    }
+}
 
 export default function Providers({
     children,
-}: Readonly<{
-    children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
+    const queryClient = getQueryClient();
+
     return (
-        <QueryClientProvider client={client}>
+        <QueryClientProvider client={queryClient}>
             <ThemeProvider
                 attribute="class"
                 defaultTheme="dark"
@@ -23,6 +44,7 @@ export default function Providers({
             >
                 {children}
             </ThemeProvider>
+            <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
     );
 }

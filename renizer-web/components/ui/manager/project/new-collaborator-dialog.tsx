@@ -1,6 +1,11 @@
 "use client";
 
-import { AlertCircle, ChevronsUpDown, CircleCheck, PlusIcon, TriangleAlert } from "lucide-react";
+import {
+    ChevronsUpDown,
+    CircleCheck,
+    PlusIcon,
+    TriangleAlert,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
@@ -20,12 +25,12 @@ import { cn } from "@/lib/utils";
 import { getMatchingRoles } from "@/lib/apis/project/apis";
 
 interface NewCollaboratorDialogProps {
-    project_id: string;
+    projectId: string;
     collaborators: CollaboratorDetails[];
 }
 
 export default function NewCollaboratorDialog({
-    project_id,
+    projectId,
     collaborators,
 }: NewCollaboratorDialogProps) {
     const [selectedContributor, setSelectedContributor] =
@@ -52,7 +57,10 @@ export default function NewCollaboratorDialog({
             </DialogTrigger>
             <DialogContent>
                 <h3 className="text-xl font-bold">Propose investment</h3>
-                <form className="space-y-[1.25rem] mt-[1.25rem]" action={action}>
+                <form
+                    className="space-y-[1.25rem] mt-[1.25rem]"
+                    action={action}
+                >
                     <div className="space-y-1.5">
                         <Label
                             className={cn("font-semibold", {
@@ -120,7 +128,7 @@ export default function NewCollaboratorDialog({
                                 const newRole = ev.currentTarget.value;
                                 setTimeout(async () => {
                                     const res = await getMatchingRoles(
-                                        project_id,
+                                        projectId,
                                         newRole
                                     );
                                     setRoleExists(res.length > 0);

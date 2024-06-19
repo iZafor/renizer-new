@@ -13,6 +13,7 @@ import {
     getPaginationRowModel,
     getFacetedRowModel,
     getFacetedUniqueValues,
+    PaginationState,
 } from "@tanstack/react-table";
 import {
     Table,
@@ -36,16 +37,20 @@ import { Project } from "@/lib/definitions";
 interface ProjectsTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
-    onAddNewProject: (newProject: Project) => void
+    onAddNewProject: (newProject: Project) => void;
 }
 
-export default function ProjectsTables<TData, TValue>({
+export default function ProjectsTable<TData, TValue>({
     columns,
     data,
     onAddNewProject,
 }: ProjectsTableProps<TData, TValue>) {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+    const [pagination, setPagination] = useState<PaginationState>({
+        pageIndex: 0,
+        pageSize: 10,
+    });
     const router = useRouter();
 
     const table = useReactTable({
@@ -59,20 +64,21 @@ export default function ProjectsTables<TData, TValue>({
         getFacetedUniqueValues: getFacetedUniqueValues(),
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
+        onPaginationChange: setPagination,
         state: {
             sorting,
             columnFilters,
-            pagination: {
-                pageIndex: 0,
-                pageSize: 10,
-            },
+            pagination,
         },
     });
 
     return (
         <Card>
             <CardHeader>
-                <ProjectsTableToolbar table={table} onAddNewProject={onAddNewProject} />
+                <ProjectsTableToolbar
+                    table={table}
+                    onAddNewProject={onAddNewProject}
+                />
             </CardHeader>
             <CardContent>
                 <Table>

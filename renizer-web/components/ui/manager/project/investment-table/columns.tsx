@@ -4,6 +4,7 @@ import { TableHeader } from "@/components/ui/table-header";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { getInitial } from "@/lib/utils";
 import { StatusIcon } from "@/components/ui/icons";
+import { format } from "date-fns";
 
 export const columns: ColumnDef<ProjectInvestment>[] = [
     {
@@ -45,16 +46,7 @@ export const columns: ColumnDef<ProjectInvestment>[] = [
             <TableHeader column={column} title="Proposal Date" />
         ),
         cell: ({ row }) => (
-            <div>
-                {new Date(row.getValue("proposal_date")).toLocaleDateString(
-                    "en-us",
-                    {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                    }
-                )}
-            </div>
+            <div>{format(row.getValue("proposal_date"), "PP")}</div>
         ),
         enableGlobalFilter: false,
     },
@@ -66,13 +58,7 @@ export const columns: ColumnDef<ProjectInvestment>[] = [
         cell: ({ row }) => (
             <div>
                 {row.getValue("investment_date")
-                    ? new Date(
-                          row.getValue("investment_date")
-                      ).toLocaleDateString("en-us", {
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                      })
+                    ? format(row.getValue("investment_date"), "PP")
                     : ""}
             </div>
         ),

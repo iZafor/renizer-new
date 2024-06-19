@@ -5,6 +5,7 @@ import { PriorityIcon, StatusIcon } from "@/components/ui/icons";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { getInitial } from "@/lib/utils";
 import TaskDetails from "./task-details";
+import { format } from "date-fns";
 
 export const columns: ColumnDef<ProjectTask>[] = [
     {
@@ -73,16 +74,9 @@ export const columns: ColumnDef<ProjectTask>[] = [
             <TableHeader column={column} title="Expected Delivery Date" />
         ),
         cell: ({ row }) => (
-            <div>
-                {new Date(
-                    row.getValue("expected_delivery_date")
-                ).toLocaleDateString("en-us", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                })}
-            </div>
+            <div>{format(row.getValue("expected_delivery_date"), "PP")}</div>
         ),
+        enableColumnFilter: false,
     },
     {
         id: "actions",

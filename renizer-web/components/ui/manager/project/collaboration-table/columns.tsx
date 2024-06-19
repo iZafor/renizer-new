@@ -3,13 +3,12 @@ import { ProjectCollaboration } from "@/lib/definitions";
 import { TableHeader } from "@/components/ui/table-header";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { getInitial } from "@/lib/utils";
+import { format } from "date-fns";
 
 export const columns: ColumnDef<ProjectCollaboration>[] = [
     {
         accessorKey: "name",
-        header: ({ column }) => (
-            <TableHeader column={column} title="Name" />
-        ),
+        header: ({ column }) => <TableHeader column={column} title="Name" />,
         filterFn: (row, id, value) =>
             value &&
             (row.getValue(id) as string)
@@ -42,16 +41,7 @@ export const columns: ColumnDef<ProjectCollaboration>[] = [
             <TableHeader column={column} title="Start Date" />
         ),
         cell: ({ row }) => (
-            <div>
-                {new Date(row.getValue("start_date")).toLocaleDateString(
-                    "en-us",
-                    {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                    }
-                )}
-            </div>
+            <div>{format(row.getValue("start_date"), "PP")}</div>
         ),
         enableGlobalFilter: false,
     },
@@ -63,14 +53,7 @@ export const columns: ColumnDef<ProjectCollaboration>[] = [
         cell: ({ row }) => (
             <div>
                 {row.getValue("end_date")
-                    ? new Date(row.getValue("end_date")).toLocaleDateString(
-                          "en-us",
-                          {
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric",
-                          }
-                      )
+                    ? format(row.getValue("end_date"), "PP")
                     : ""}
             </div>
         ),
@@ -107,9 +90,7 @@ export const columns: ColumnDef<ProjectCollaboration>[] = [
         header: ({ column }) => (
             <TableHeader column={column} title="Completed Tasks" />
         ),
-        cell: ({ row }) => (
-            <div>{row.getValue("tasks_completed") || "0"}</div>
-        ),
+        cell: ({ row }) => <div>{row.getValue("tasks_completed") || "0"}</div>,
         sortingFn: (rowA, rowB, columnId) =>
             Number(rowA.getValue(columnId) || "0") -
             Number(rowB.getValue(columnId) || "0"),

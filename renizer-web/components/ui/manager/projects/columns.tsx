@@ -3,6 +3,7 @@ import { Project } from "@/lib/definitions";
 import { TableHeader } from "@/components/ui/table-header";
 import { StatusIcon } from "@/components/ui/icons";
 import { formatEnergyUnit } from "@/lib/utils";
+import {format} from "date-fns";
 
 export const columns: ColumnDef<Project>[] = [
     {
@@ -28,11 +29,6 @@ export const columns: ColumnDef<Project>[] = [
             </div>
         ),
         filterFn: (row, id, value) => {
-            console.log(
-                (row.getValue("description") as string)
-                    .toLowerCase()
-                    .includes(value.toLowerCase())
-            );
             return (
                 value &&
                 (row.getValue(id) as string)
@@ -48,7 +44,7 @@ export const columns: ColumnDef<Project>[] = [
         ),
         cell: ({ row }) => (
             <div className="w-[10rem]">
-                {new Date(row.getValue("creation_date")).toLocaleDateString()}
+                {format(row.getValue("creation_date"), "PP")}
             </div>
         ),
         enableGlobalFilter: false,

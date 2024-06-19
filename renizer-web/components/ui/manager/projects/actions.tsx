@@ -26,8 +26,8 @@ export async function createNewProject(
         name: data.name,
         description: data.description!,
         status: "Not Started Yet",
-        energy_sold: 0,
-        creation_date: new Date(),
+        energy_sold: "0",
+        creation_date: new Date().toISOString(),
     };
     try {
         await pool.query(

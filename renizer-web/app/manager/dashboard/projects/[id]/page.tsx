@@ -19,7 +19,7 @@ import {
 import { useQuery } from "react-query";
 import ProjectLoadingSkeleton from "@/components/ui/manager/project/project-loading-skeleton";
 import ProjectInfo from "@/components/ui/manager/project/project-info";
-import ProjectStakeHolders from "@/components/ui/manager/project/project-stakeholder";
+import ProjectStakeHolders from "@/components/ui/manager/project/project-stakeholders";
 import { columns } from "@/components/ui/manager/project/task-table/columns";
 import TasksTable from "@/components/ui/manager/project/task-table/tasks-table";
 
@@ -39,7 +39,9 @@ export default function Project({ params: { id } }: ProjectProps) {
     const { data, isLoading } = useQuery(["project", id], () => fetchData(id));
 
     const [project, setProject] = useState<ProjectDetails>();
-    const [collaborators, setCollaborators] = useState<CollaboratorDetails[]>([]);
+    const [collaborators, setCollaborators] = useState<CollaboratorDetails[]>(
+        []
+    );
     const [collaborations, setCollaborations] = useState<
         ProjectCollaboration[]
     >([]);

@@ -6,9 +6,9 @@ import { getInitial } from "@/lib/utils";
 
 export const columns: ColumnDef<ProjectCollaboration>[] = [
     {
-        accessorKey: "contributor",
+        accessorKey: "name",
         header: ({ column }) => (
-            <TableHeader column={column} title="Contributor" />
+            <TableHeader column={column} title="Name" />
         ),
         filterFn: (row, id, value) =>
             value &&
@@ -20,10 +20,10 @@ export const columns: ColumnDef<ProjectCollaboration>[] = [
                 <Avatar>
                     <AvatarImage src="" />
                     <AvatarFallback>
-                        {getInitial(row.getValue("contributor"))}
+                        {getInitial(row.getValue("name"))}
                     </AvatarFallback>
                 </Avatar>
-                <p>{row.getValue("contributor")}</p>
+                <p>{row.getValue("name")}</p>
             </div>
         ),
     },

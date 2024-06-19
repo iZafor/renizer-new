@@ -54,7 +54,7 @@ export interface ProjectInvestment {
 
 export interface ProjectCollaboration {
     p_user_id: string;
-    contributor: string;
+    name: string;
     project_id: string;
     start_date?: string;
     end_date?: string;

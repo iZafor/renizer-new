@@ -26,7 +26,7 @@ export default function ProjectCollaborators({
     useEffect(() => {
         const collaboratorMap: { [key: string]: string } = {};
         for (const co of collaborations) {
-            collaboratorMap[co.p_user_id] = co.contributor;
+            collaboratorMap[co.p_user_id] = co.name;
         }
         setUniqueContributors(Object.values(collaboratorMap));
     }, [collaborations]);

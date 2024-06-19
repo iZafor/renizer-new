@@ -37,7 +37,7 @@ export async function GET(_: NextRequest, { params: { id } }: Params) {
 
             -- ProjectCollaboration[]
             SELECT 
-                a.p_user_id, CONCAT(first_name, ' ', last_name) AS contributor, a.project_id, start_date, end_date, role, COUNT(c.task_name) AS total_assigned_tasks, tasks_in_progress, tasks_completed
+                a.p_user_id, CONCAT(first_name, ' ', last_name) AS name, a.project_id, start_date, end_date, role, COUNT(c.task_name) AS total_assigned_tasks, tasks_in_progress, tasks_completed
             FROM 
                 Collaboration_T AS a 
                 INNER JOIN User_T AS b ON a.p_user_id = b.user_id
@@ -57,7 +57,7 @@ export async function GET(_: NextRequest, { params: { id } }: Params) {
             WHERE 
                 a.project_id = '${id}'
             GROUP BY
-                a.p_user_id, role, contributor, a.project_id, start_date, end_date, tasks_in_progress, tasks_completed
+                a.p_user_id, role, name, a.project_id, start_date, end_date, tasks_in_progress, tasks_completed
             ORDER BY
                 start_date DESC;
 

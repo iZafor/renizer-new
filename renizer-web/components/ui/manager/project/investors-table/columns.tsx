@@ -39,16 +39,14 @@ export const columns: ColumnDef<InvestorDetails>[] = [
         header: ({ column }) => (
             <TableHeader column={column} title="Invested In Projects" />
         ),
-        sortingFn: (rowA, rowB, colId) =>
-            Number(rowA.getValue(colId)) - Number(rowB.getValue(colId)),
+        enableGlobalFilter: false,
     },
     {
         accessorKey: "total_investment",
         header: ({ column }) => (
             <TableHeader column={column} title="Total Investment" />
         ),
-        cell: ({row}) => <div>${row.getValue("total_investment")}</div>,
-        sortingFn: (rowA, rowB, colId) =>
-            Number(rowA.getValue(colId)) - Number(rowB.getValue(colId)),
+        cell: ({ row }) => <div>${row.getValue("total_investment")}</div>,
+        enableGlobalFilter: false,
     },
 ];

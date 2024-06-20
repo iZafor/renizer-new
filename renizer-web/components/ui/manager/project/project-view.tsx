@@ -11,7 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import ProjectInfo from "@/components/ui/manager/project/project-info";
 import ProjectStakeHolders from "@/components/ui/manager/project/project-stakeholders";
 import { columns } from "@/components/ui/manager/project/task-table/columns";
-import { useProjectDataQueryOptions } from "@/lib/hooks/use-project-data-query";
+import { useProjectDataQueryOptions } from "@/lib/hooks/manager/use-project-data-query";
 import DataTable from "@/components/ui/data-table";
 import TasksTableToolbar from "./task-table/tasks-table-toolbar";
 import { ProjectIdContext } from "@/lib/contexts/project";

@@ -65,11 +65,8 @@ export const columns: ColumnDef<ProjectCollaboration>[] = [
             <TableHeader column={column} title="Total Assigned Tasks" />
         ),
         cell: ({ row }) => (
-            <div>{row.getValue("total_assigned_tasks") || "0"}</div>
+            <div>{row.getValue("total_assigned_tasks") || "-"}</div>
         ),
-        sortingFn: (rowA, rowB, columnId) =>
-            Number(rowA.getValue(columnId) || "0") -
-            Number(rowB.getValue(columnId) || "0"),
         enableGlobalFilter: false,
     },
     {
@@ -78,11 +75,8 @@ export const columns: ColumnDef<ProjectCollaboration>[] = [
             <TableHeader column={column} title="Tasks In Progress" />
         ),
         cell: ({ row }) => (
-            <div>{row.getValue("tasks_in_progress") || "0"}</div>
+            <div>{row.getValue("tasks_in_progress") || "-"}</div>
         ),
-        sortingFn: (rowA, rowB, columnId) =>
-            Number(rowA.getValue(columnId) || "0") -
-            Number(rowB.getValue(columnId) || "0"),
         enableGlobalFilter: false,
     },
     {
@@ -90,10 +84,7 @@ export const columns: ColumnDef<ProjectCollaboration>[] = [
         header: ({ column }) => (
             <TableHeader column={column} title="Completed Tasks" />
         ),
-        cell: ({ row }) => <div>{row.getValue("tasks_completed") || "0"}</div>,
-        sortingFn: (rowA, rowB, columnId) =>
-            Number(rowA.getValue(columnId) || "0") -
-            Number(rowB.getValue(columnId) || "0"),
+        cell: ({ row }) => <div>{row.getValue("tasks_completed") || "-"}</div>,
         enableGlobalFilter: false,
     },
 ];

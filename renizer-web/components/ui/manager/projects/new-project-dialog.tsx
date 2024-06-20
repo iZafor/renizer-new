@@ -16,23 +16,16 @@ import { createNewProject } from "./actions";
 import { useFormState } from "react-dom";
 import { cn } from "@/lib/utils";
 import { CircleAlert } from "lucide-react";
-import { Project } from "@/lib/definitions";
 import { useEffect, useState } from "react";
 
-interface NewProjectDialogProps {
-    onAddNewProject: (newProject: Project) => void;
-}
-
-export default function NewProjectDialog({
-    onAddNewProject,
-}: NewProjectDialogProps) {
+export default function NewProjectDialog() {
     const [open, setOpen] = useState(false);
     const [state, action] = useFormState(createNewProject, undefined);
 
     useEffect(() => {
         if (state?.newProject) {
             setOpen(false);
-            onAddNewProject(state.newProject);
+            // onAddNewProject(state.newProject);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state]);

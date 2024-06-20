@@ -133,26 +133,19 @@ export default function TaskDetails({ className, task }: TaskDetailsProps) {
                                         <Calendar
                                             mode="single"
                                             selected={
-                                                new Date(
-                                                    currentTask.expected_delivery_date
-                                                )
+                                                currentTask.expected_delivery_date
                                             }
                                             disabled={(date) =>
-                                                date <
-                                                new Date(
-                                                    currentTask.assigned_date
-                                                )
+                                                date < currentTask.assigned_date
                                             }
                                             today={
-                                                new Date(
-                                                    currentTask.expected_delivery_date
-                                                )
+                                                currentTask.expected_delivery_date
                                             }
                                             onSelect={(newDate) => {
                                                 setCurrentTask((prev) => ({
                                                     ...prev,
                                                     expected_delivery_date:
-                                                        newDate?.toISOString()!,
+                                                        newDate || new Date(),
                                                 }));
                                             }}
                                         />

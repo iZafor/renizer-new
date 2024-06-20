@@ -20,9 +20,9 @@ import { useEffect, useState } from "react";
 import CollaboratorsTable from "@/components/ui/manager/project/collaborators-table/collaborators-table";
 import { columns } from "@/components/ui/manager/project/collaborators-table/columns";
 import { useFormState } from "react-dom";
-import { addNewCollaborator } from "@/lib/actions/project/actions";
+import { addNewCollaborator } from "@/lib/actions/manager/project/actions";
 import { cn } from "@/lib/utils";
-import { getMatchingRoles } from "@/lib/apis/project/apis";
+import { getMatchingRoles } from "@/lib/apis/manager/project/apis";
 
 interface NewCollaboratorDialogProps {
     projectId: string;

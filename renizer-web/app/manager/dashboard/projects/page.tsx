@@ -1,30 +1,21 @@
-"use client";
+import {
+    dehydrate,
+    HydrationBoundary,
+    QueryClient,
+} from "@tanstack/react-query";
 
-import { useEffect, useState } from "react";
 import ProjectsTable from "@/components/ui/manager/projects/projects-table";
-import { Project } from "@/lib/definitions";
-import { columns } from "@/components/ui/manager/projects/columns";
+import { useProjectsQueryOptions } from "@/lib/hooks/manager/use-projects-query";
 
-export default function Projects() {
-    const [projects, setProjects] = useState<Project[]>([]);
-
-    useEffect(() => {
-        async function fetchData() {
-            const newProjects: Project[] = await fetch(
-                "/api/manager/dashboard/projects"
-            ).then((res) => res.json());
-            setProjects(newProjects);
-        }
-        fetchData();
-    }, []);
+export default async function Projects() {
+    const queryClient = new QueryClient();
+    await queryClient.prefetchQuery(
+        useProjectsQueryOptions("928fd1c4-26dc-11ef-b68d-0045e2d4f24d")
+    );
 
     return (
-        <ProjectsTable
-            data={projects}
-            columns={columns}
-            onAddNewProject={(newProject) =>
-                setProjects((prev) => [newProject, ...prev])
-            }
-        />
+        <HydrationBoundary state={dehydrate(queryClient)}>
+            <ProjectsTable />
+        </HydrationBoundary>
     );
 }

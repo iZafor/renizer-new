@@ -12,12 +12,10 @@ import { Project } from "@/lib/definitions";
 
 interface ProjectTableToolbarProps<TData> {
     table: Table<TData>;
-    onAddNewProject: (newProject: Project) => void;
 }
 
 export default function ProjectTableToolbar<TData>({
     table,
-    onAddNewProject,
 }: ProjectTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0;
 
@@ -50,7 +48,7 @@ export default function ProjectTableToolbar<TData>({
                 )}
             </div>
             <div className="flex gap-2">
-                <NewProjectDialog onAddNewProject={onAddNewProject} />
+                <NewProjectDialog  />
                 <TableColumnViewOptions table={table} />
             </div>
         </div>

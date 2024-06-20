@@ -9,4 +9,5 @@ export const pool = mysql.createPool({
     connectionLimit: 10,
     connectTimeout: 60000,
     multipleStatements: true,
+    decimalNumbers: true,
 });

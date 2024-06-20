@@ -26,8 +26,9 @@ export async function createNewProject(
         name: data.name,
         description: data.description!,
         status: "Not Started Yet",
-        energy_sold: "0",
-        creation_date: new Date().toISOString(),
+        energy_sold: 0,
+        energy_produced: 0,
+        creation_date: new Date(),
     };
     try {
         await pool.query(
@@ -39,7 +40,7 @@ export async function createNewProject(
                 newProject.name,
                 newProject.description,
                 data.restrictedToOrganization,
-                // Todo: use the user id of the logged in manger
+                // TODO: use the user id of the logged in manager
                 "928fd03d-26dc-11ef-b68d-0045e2d4f24d",
                 newProject.creation_date,
             ]

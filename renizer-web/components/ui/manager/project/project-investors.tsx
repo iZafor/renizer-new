@@ -8,7 +8,7 @@ import InvestmentTable from "@/components/ui/manager/project/investment-table/in
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import { useContext, useEffect, useState } from "react";
 import InvestmentProposalDialog from "@/components/ui/manager/project/investment-proposal-dialog";
-import { useProjectDataQueryOptions } from "@/lib/hooks/use-project-data-query";
+import { useProjectDataQueryOptions } from "@/lib/hooks/manager/use-project-data-query";
 import { useQuery } from "@tanstack/react-query";
 import { ProjectIdContext } from "@/lib/contexts/project";
 

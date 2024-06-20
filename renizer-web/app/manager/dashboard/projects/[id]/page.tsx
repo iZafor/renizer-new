@@ -1,5 +1,5 @@
 import ProjectView from "@/components/ui/manager/project/project-view";
-import { useProjectDataQueryOptions } from "@/lib/hooks/use-project-data-query";
+import { useProjectDataQueryOptions } from "@/lib/hooks/manager/use-project-data-query";
 import {
     dehydrate,
     HydrationBoundary,

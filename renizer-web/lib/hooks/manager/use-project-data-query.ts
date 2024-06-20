@@ -1,4 +1,4 @@
-import { getProjectData } from "@/lib/apis/project/apis";
+import { getProjectData } from "@/lib/apis/manager/project/apis";
 
 export const useProjectDataQueryOptions = (id: string) => {
     const queryKey = ["projectData", id];

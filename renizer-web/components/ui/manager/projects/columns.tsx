@@ -3,7 +3,7 @@ import { Project } from "@/lib/definitions";
 import { TableHeader } from "@/components/ui/table-header";
 import { StatusIcon } from "@/components/ui/icons";
 import { formatEnergyUnit } from "@/lib/utils";
-import {format} from "date-fns";
+import { format } from "date-fns";
 
 export const columns: ColumnDef<Project>[] = [
     {
@@ -67,12 +67,7 @@ export const columns: ColumnDef<Project>[] = [
             <TableHeader column={column} title="Energy Produced" />
         ),
         cell: ({ row }) => (
-            <div>
-                {formatEnergyUnit(Number(row.getValue("energy_produced")))}
-            </div>
+            <div>{formatEnergyUnit(row.getValue("energy_produced"))}</div>
         ),
-        sortingFn: (rowA, rowB, colId) =>
-            Number(rowA.getValue(colId)) - Number(rowB.getValue(colId)),
-        enableGlobalFilter: false,
     },
 ];

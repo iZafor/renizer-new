@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import InvestorsTable from "@/components/ui/manager/project/investors-table/investors-table";
 import { columns } from "@/components/ui/manager/project/investors-table/columns";
 import { useFormState } from "react-dom";
-import { proposeInvestment } from "@/lib/actions/project/actions";
+import { proposeInvestment } from "@/lib/actions/manager/project/actions";
 import { cn } from "@/lib/utils";
 
 interface InvestmentProposalDialogProps {

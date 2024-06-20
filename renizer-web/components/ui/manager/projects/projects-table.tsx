@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
-    ColumnDef,
     SortingState,
     ColumnFiltersState,
     flexRender,
@@ -33,18 +32,16 @@ import {
 import ProjectsTableToolbar from "./projects-table-toolbar";
 import { useRouter } from "next/navigation";
 import { Project } from "@/lib/definitions";
+import { useQuery } from "@tanstack/react-query";
+import { useProjectsQueryOptions } from "@/lib/hooks/manager/use-projects-query";
+import { columns } from "./columns";
 
-interface ProjectsTableProps<TData, TValue> {
-    columns: ColumnDef<TData, TValue>[];
-    data: TData[];
-    onAddNewProject: (newProject: Project) => void;
-}
-
-export default function ProjectsTable<TData, TValue>({
-    columns,
-    data,
-    onAddNewProject,
-}: ProjectsTableProps<TData, TValue>) {
+export default function ProjectsTable() {
+    const { data: projects } = useQuery(
+        useProjectsQueryOptions("928fd1c4-26dc-11ef-b68d-0045e2d4f24d")
+    );
+    const data = useMemo(() => projects || [], [projects]);
+    console.log(data[0]);
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [pagination, setPagination] = useState<PaginationState>({
@@ -75,10 +72,7 @@ export default function ProjectsTable<TData, TValue>({
     return (
         <Card>
             <CardHeader>
-                <ProjectsTableToolbar
-                    table={table}
-                    onAddNewProject={onAddNewProject}
-                />
+                <ProjectsTableToolbar table={table} />
             </CardHeader>
             <CardContent>
                 <Table>

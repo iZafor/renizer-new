@@ -34,11 +34,7 @@ export const columns: ColumnDef<ProjectInvestment>[] = [
         header: ({ column }) => (
             <TableHeader column={column} title="Investment Amount" />
         ),
-        filterFn: (row, id, value) =>
-            value &&
-            (row.getValue(id) as string)
-                .toLowerCase()
-                .includes(value.toLowerCase()),
+        enableGlobalFilter: false,
     },
     {
         accessorKey: "proposal_date",

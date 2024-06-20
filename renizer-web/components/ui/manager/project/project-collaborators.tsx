@@ -8,7 +8,7 @@ import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import CollaborationTable from "@/components/ui/manager/project/collaboration-table/collaboration-table";
 import { columns } from "@/components/ui/manager/project/collaboration-table/columns";
 import NewCollaboratorDialog from "./new-collaborator-dialog";
-import { useProjectDataQueryOptions } from "@/lib/hooks/use-project-data-query";
+import { useProjectDataQueryOptions } from "@/lib/hooks/manager/use-project-data-query";
 import { useQuery } from "@tanstack/react-query";
 import { ProjectIdContext } from "@/lib/contexts/project";
 
@@ -51,10 +51,12 @@ export default function ProjectCollaborators() {
                     <Button variant="outline">View All</Button>
                 </DialogTrigger>
                 <DialogContent className="min-w-[70rem]">
-                    <CollaborationTable
-                        data={collaborations}
-                        columns={columns}
-                    />
+                    <div className="mt-6">
+                        <CollaborationTable
+                            data={collaborations}
+                            columns={columns}
+                        />
+                    </div>
                 </DialogContent>
             </Dialog>
             <NewCollaboratorDialog

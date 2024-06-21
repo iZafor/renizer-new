@@ -25,32 +25,36 @@ export const NewProjectFormSchema = z.object({
     restrictedToOrganization: z.boolean().optional(),
 });
 
-export type MonoStateUpdateFormState =
+export type ProjectMonoStateUpdateFormState =
     | {
           errors?: {
               value?: string[];
+              projectId?: string[];
           };
           message?: string;
-          updatedValue?: number;
+          updatedValue?: unknown;
       }
     | undefined;
 
+export const UpdateCurrentEnergyRateFormSchema = z.object({
+    value: z.number({ message: "Expected number." }).gt(0, {
+        message: "Energy rate must be greater than 0.",
+    }),
+    projectId: z.string().uuid({ message: "Invalid form data." }),
+});
+
 export const UpdateProducedEnergyFormSchema = z.object({
-    value: z
-        .number()
-        .min(0, {
-            message: "Produced energy must be a positive value.",
-        })
-        .default(0),
+    value: z.number({ message: "Expected number." }).gt(0, {
+        message: "Produced energy must be greater than 0.",
+    }),
+    projectId: z.string().uuid({ message: "Invalid form data." }),
 });
 
 export const UpdateSoldEnergyFormSchema = z.object({
-    value: z
-        .number()
-        .min(0, {
-            message: "Sold energy must be a positive value.",
-        })
-        .default(0),
+    value: z.number({ message: "Expected number." }).gt(0, {
+        message: "Sold energy must be greater than 0.",
+    }),
+    projectId: z.string().uuid({ message: "Invalid form data." }),
 });
 
 export type InvestmentProposalFormState =

@@ -32,9 +32,9 @@ export interface ProjectDetails {
     start_date?: Date;
     end_date?: Date;
     status: string;
-    energy_rate?: string;
-    energy_produced?: string;
-    energy_sold?: string;
+    energy_rate: number;
+    energy_produced: number;
+    energy_sold: number;
     total_cost: number;
     org_restricted: number;
     m_p_user_id: string;

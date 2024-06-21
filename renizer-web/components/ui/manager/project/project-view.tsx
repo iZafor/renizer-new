@@ -8,7 +8,7 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
-import ProjectInfo from "@/components/ui/manager/project/project-info";
+import ProjectKeyIndicators from "@/components/ui/manager/project/project-key-indicators";
 import ProjectStakeHolders from "@/components/ui/manager/project/project-stakeholders";
 import { columns } from "@/components/ui/manager/project/task-table/columns";
 import DataTable from "@/components/ui/data-table";
@@ -34,7 +34,7 @@ export default function ProjectView({ id }: ProjectViewProps) {
                     <CardDescription>{project?.description}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    <ProjectInfo project={project} />
+                    <ProjectKeyIndicators project={project} />
                     <ProjectStakeHolders />
                     <DataTable
                         columns={columns}

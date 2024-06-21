@@ -19,33 +19,32 @@ import { NewProjectFromState } from "@/lib/schemas";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ManagerIdContext } from "@/lib/contexts/manager";
 import { Project } from "@/lib/definitions";
+import { useProjectsQueryOptions } from "@/lib/hooks/manager/use-projects-query";
 
 export default function NewProjectDialog() {
     const managerId = useContext(ManagerIdContext);
+    const projectQueryKey = useProjectsQueryOptions(managerId).queryKey;
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
     const [state, setState] = useState<NewProjectFromState>(undefined);
     const mutation = useMutation({
         mutationFn: async (formData: FormData) => {
-            return await fetch("/api/manager/dashboard/projects", {
+            return await fetch("/api/manager/dashboard/project/new-project", {
                 method: "POST",
                 body: formData,
             }).then((res) => res.json());
         },
         onSuccess: (newState: NewProjectFromState) => {
             if (newState?.newProject) {
-                queryClient.setQueryData(
-                    ["projects", managerId],
-                    (old: Project[]) => [
-                        {
-                            ...newState.newProject,
-                            creation_date: new Date(
-                                newState.newProject?.creation_date!
-                            ),
-                        },
-                        ...old,
-                    ]
-                );
+                queryClient.setQueryData(projectQueryKey, (old: Project[]) => [
+                    {
+                        ...newState.newProject,
+                        creation_date: new Date(
+                            newState.newProject?.creation_date!
+                        ),
+                    },
+                    ...old,
+                ]);
                 setOpen(false);
             }
             setState(newState);

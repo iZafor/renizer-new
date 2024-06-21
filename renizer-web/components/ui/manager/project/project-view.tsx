@@ -14,7 +14,7 @@ import { columns } from "@/components/ui/manager/project/task-table/columns";
 import { useProjectDataQueryOptions } from "@/lib/hooks/manager/use-project-data-query";
 import DataTable from "@/components/ui/data-table";
 import TasksTableToolbar from "./task-table/tasks-table-toolbar";
-import { ProjectIdContext } from "@/lib/contexts/project";
+import { ProjectIdContext } from "@/lib/contexts/manager";
 
 interface ProjectViewProps {
     id: string;

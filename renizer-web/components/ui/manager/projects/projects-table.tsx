@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import {
     SortingState,
     ColumnFiltersState,
@@ -35,13 +35,12 @@ import { Project } from "@/lib/definitions";
 import { useQuery } from "@tanstack/react-query";
 import { useProjectsQueryOptions } from "@/lib/hooks/manager/use-projects-query";
 import { columns } from "./columns";
+import { ManagerIdContext } from "@/lib/contexts/manager";
 
 export default function ProjectsTable() {
-    const { data: projects } = useQuery(
-        useProjectsQueryOptions("928fd1c4-26dc-11ef-b68d-0045e2d4f24d")
-    );
+    const managerId = useContext(ManagerIdContext);
+    const { data: projects } = useQuery(useProjectsQueryOptions(managerId));
     const data = useMemo(() => projects || [], [projects]);
-    console.log(data[0]);
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [pagination, setPagination] = useState<PaginationState>({

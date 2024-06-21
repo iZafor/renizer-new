@@ -12,23 +12,45 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { createNewProject } from "./actions";
-import { useFormState } from "react-dom";
 import { cn } from "@/lib/utils";
 import { CircleAlert } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useContext, useState } from "react";
+import { NewProjectFromState } from "@/lib/schemas";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ManagerIdContext } from "@/lib/contexts/manager";
+import { Project } from "@/lib/definitions";
 
 export default function NewProjectDialog() {
+    const managerId = useContext(ManagerIdContext);
+    const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
-    const [state, action] = useFormState(createNewProject, undefined);
-
-    useEffect(() => {
-        if (state?.newProject) {
-            setOpen(false);
-            // onAddNewProject(state.newProject);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [state]);
+    const [state, setState] = useState<NewProjectFromState>(undefined);
+    const mutation = useMutation({
+        mutationFn: async (formData: FormData) => {
+            return await fetch("/api/manager/dashboard/projects", {
+                method: "POST",
+                body: formData,
+            }).then((res) => res.json());
+        },
+        onSuccess: (newState: NewProjectFromState) => {
+            if (newState?.newProject) {
+                queryClient.setQueryData(
+                    ["projects", managerId],
+                    (old: Project[]) => [
+                        {
+                            ...newState.newProject,
+                            creation_date: new Date(
+                                newState.newProject?.creation_date!
+                            ),
+                        },
+                        ...old,
+                    ]
+                );
+                setOpen(false);
+            }
+            setState(newState);
+        },
+    });
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -41,7 +63,14 @@ export default function NewProjectDialog() {
                 <DialogHeader>
                     <DialogTitle>Create new project</DialogTitle>
                 </DialogHeader>
-                <form className="space-y-4" action={action}>
+                <form
+                    className="space-y-4"
+                    onSubmit={(ev) => {
+                        ev.preventDefault();
+                        mutation.mutate(new FormData(ev.currentTarget));
+                    }}
+                >
+                    <input type="hidden" value={managerId} name="managerId" />
                     <div className="space-y-1.5">
                         <Label
                             className={cn("font-semibold", {
@@ -87,12 +116,22 @@ export default function NewProjectDialog() {
                             Restrict project to your organization only
                         </Label>
                     </div>
-                    <Button type="submit">Submit</Button>
+                    <Button type="submit" disabled={mutation.isPending}>
+                        Submit
+                    </Button>
                     {state?.message && (
                         <div className="flex gap-2 items-center">
                             <CircleAlert className="stroke-destructive size-4" />
                             <p className="font-semibold text-destructive text-sm">
                                 {state?.message}
+                            </p>
+                        </div>
+                    )}
+                    {state?.errors?.managerId && (
+                        <div className="flex gap-2 items-center">
+                            <CircleAlert className="stroke-destructive size-4" />
+                            <p className="font-semibold text-destructive text-sm">
+                                {state.errors.managerId}
                             </p>
                         </div>
                     )}

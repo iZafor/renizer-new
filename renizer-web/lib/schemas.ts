@@ -6,6 +6,7 @@ export type NewProjectFromState =
           errors?: {
               name?: string[];
               description?: string[];
+              managerId?: string[];
           };
           message?: string;
           newProject?: Project;
@@ -20,6 +21,7 @@ export const NewProjectFormSchema = z.object({
         })
         .default(""),
     description: z.string().default("").optional(),
+    managerId: z.string().uuid({ message: "Invalid form data." }),
     restrictedToOrganization: z.boolean().optional(),
 });
 
@@ -63,11 +65,11 @@ export type InvestmentProposalFormState =
 
 export const InvestmentProposalFormSchema = z.object({
     investor: z.string().length(36, {
-        message: "Investor must be selected."
+        message: "Investor must be selected.",
     }),
     amount: z.number().min(1, {
-        message: "Amount must be greater than 0."
-    })
+        message: "Amount must be greater than 0.",
+    }),
 });
 
 export type NewCollaboratorFormState =
@@ -82,9 +84,9 @@ export type NewCollaboratorFormState =
 
 export const NewCollaboratorFormSchema = z.object({
     contributor: z.string().length(36, {
-        message: "Contributor must be selected."
+        message: "Contributor must be selected.",
     }),
     role: z.string().min(1, {
-        message: "Role cannot be empty."
-    })
+        message: "Role cannot be empty.",
+    }),
 });

@@ -10,7 +10,7 @@ import { columns } from "@/components/ui/manager/project/collaboration-table/col
 import NewCollaboratorDialog from "./new-collaborator-dialog";
 import { useProjectDataQueryOptions } from "@/lib/hooks/manager/use-project-data-query";
 import { useQuery } from "@tanstack/react-query";
-import { ProjectIdContext } from "@/lib/contexts/project";
+import { ProjectIdContext } from "@/lib/contexts/manager";
 
 export default function ProjectCollaborators() {
     const projectId = useContext(ProjectIdContext);

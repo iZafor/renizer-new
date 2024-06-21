@@ -1,23 +1,23 @@
-"use server";
-
-import { v4 as uuid } from "uuid";
+import { NextRequest } from "next/server";
 import { pool } from "@/lib/db";
-import { NewProjectFromState, NewProjectFormSchema } from "@/lib/schemas";
+import { v4 as uuid } from "uuid";
+import { NewProjectFormSchema } from "@/lib/schemas";
 import { Project } from "@/lib/definitions";
 
-export async function createNewProject(
-    _: NewProjectFromState,
-    formData: FormData
-): Promise<NewProjectFromState> {
+export async function POST(req: NextRequest) {
+    const formData = await req.formData();
     const validatedData = await NewProjectFormSchema.safeParseAsync({
         name: formData.get("name"),
         description: formData.get("description"),
+        managerId: formData.get("managerId"),
         restrictedToOrganization:
-            formData?.get("restrictedToOrganization") === "on",
+            formData.get("restrictedToOrganization") === "on",
     });
 
     if (!validatedData.success) {
-        return { errors: validatedData.error.flatten().fieldErrors };
+        return Response.json({
+            errors: validatedData.error.flatten().fieldErrors,
+        });
     }
 
     const data = validatedData.data;
@@ -30,6 +30,7 @@ export async function createNewProject(
         energy_produced: 0,
         creation_date: new Date(),
     };
+
     try {
         await pool.query(
             `INSERT INTO Project_T (project_id, name, description, org_restricted, m_p_user_id, creation_date)
@@ -40,14 +41,15 @@ export async function createNewProject(
                 newProject.name,
                 newProject.description,
                 data.restrictedToOrganization,
-                // TODO: use the user id of the logged in manager
-                "928fd03d-26dc-11ef-b68d-0045e2d4f24d",
+                data.managerId,
                 newProject.creation_date,
             ]
         );
-        return { newProject };
+        return Response.json({ newProject });
     } catch (error) {
         console.error(error);
-        return { message: "Unexpected error! Please try again later." };
+        return Response.json({
+            message: "Unexpected error! Please try again later.",
+        });
     }
 }

@@ -15,14 +15,18 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { CollaboratorDetails } from "@/lib/definitions";
+import { CollaboratorDetails, ProjectCollaboration } from "@/lib/definitions";
 import { useEffect, useState } from "react";
 import CollaboratorsTable from "@/components/ui/manager/project/collaborators-table/collaborators-table";
 import { columns } from "@/components/ui/manager/project/collaborators-table/columns";
-import { useFormState } from "react-dom";
-import { addNewCollaborator } from "@/lib/actions/manager/project/actions";
 import { cn } from "@/lib/utils";
 import { getMatchingRoles } from "@/lib/apis/manager/project/apis";
+import { NewCollaboratorFormState } from "@/lib/schemas";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+    useCollaboratorsDetailsQueryOptions,
+    useProjectCollaborationsQueryOptions,
+} from "@/lib/hooks/manager/use-project-query";
 
 interface NewCollaboratorDialogProps {
     projectId: string;
@@ -35,12 +39,56 @@ export default function NewCollaboratorDialog({
 }: NewCollaboratorDialogProps) {
     const [selectedContributor, setSelectedContributor] =
         useState<CollaboratorDetails>();
+    const [dialogOpen, setDialogOpen] = useState(false);
     const [open, setOpen] = useState(false);
     const [contributor, setContributor] = useState("");
     const [value, setValue] = useState("");
     const [role, setRole] = useState("");
     const [roleExists, setRoleExists] = useState(false);
-    const [state, action] = useFormState(addNewCollaborator, undefined);
+    const [state, setState] = useState<NewCollaboratorFormState>(undefined);
+    const collaboratorsQueryKey =
+        useCollaboratorsDetailsQueryOptions(projectId).queryKey;
+    const projectCollaborationsQueryKey =
+        useProjectCollaborationsQueryOptions(projectId).queryKey;
+    const queryClient = useQueryClient();
+    const mutation = useMutation({
+        mutationFn: async (formData: FormData) =>
+            await fetch("/api/manager/dashboard/project/new-collaboration", {
+                method: "POST",
+                body: formData,
+            }).then((res) => res.json()),
+        onSuccess: (data: NewCollaboratorFormState) => {
+            if (data?.newCollaboration) {
+                data.newCollaboration.start_date = new Date(
+                    data.newCollaboration.start_date!
+                );
+                queryClient.setQueryData(
+                    projectCollaborationsQueryKey,
+                    (old: ProjectCollaboration[]) => [
+                        data.newCollaboration,
+                        ...old,
+                    ]
+                );
+                queryClient.setQueryData(
+                    collaboratorsQueryKey,
+                    (old: CollaboratorDetails[]) =>
+                        old.filter(
+                            (col) =>
+                                col.c_p_user_id !==
+                                data.newCollaboration?.p_user_id
+                        )
+                );
+
+                setOpen(false);
+                setDialogOpen(false);
+                setValue("");
+                setContributor("");
+                setRole("");
+                setRoleExists(false);
+            }
+            setState(data);
+        },
+    });
 
     useEffect(() => {
         setContributor(selectedContributor?.c_p_user_id!);
@@ -49,7 +97,7 @@ export default function NewCollaboratorDialog({
     }, [selectedContributor]);
 
     return (
-        <Dialog>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
                 <Button variant="outline" size="icon">
                     <PlusIcon className="size-[1.25rem]" />
@@ -59,7 +107,10 @@ export default function NewCollaboratorDialog({
                 <h3 className="text-xl font-bold">Propose investment</h3>
                 <form
                     className="space-y-[1.25rem] mt-[1.25rem]"
-                    action={action}
+                    onSubmit={(ev) => {
+                        ev.preventDefault();
+                        mutation.mutate(new FormData(ev.currentTarget));
+                    }}
                 >
                     <div className="space-y-1.5">
                         <Label
@@ -106,6 +157,7 @@ export default function NewCollaboratorDialog({
                             )}
                         </div>
                     </div>
+                    <Input type="hidden" name="projectId" value={projectId} />
                     <Input
                         type="hidden"
                         name="contributor"
@@ -158,7 +210,9 @@ export default function NewCollaboratorDialog({
                                 </div>
                             ))}
                     </div>
-                    <Button disabled={roleExists}>Submit</Button>
+                    <Button disabled={roleExists || mutation.isPending}>
+                        Submit
+                    </Button>
                 </form>
             </DialogContent>
         </Dialog>

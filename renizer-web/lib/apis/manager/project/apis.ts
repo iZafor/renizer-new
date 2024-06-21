@@ -63,19 +63,19 @@ export async function getProjectCollaborations(projectId: string) {
             .query<RowDataPacket[]>(
                 `
             SELECT 
-                a.p_user_id, CONCAT(first_name, ' ', last_name) AS name, a.project_id, start_date, end_date, role, COUNT(c.task_name) AS total_assigned_tasks, tasks_in_progress, tasks_completed
+                a.p_user_id, CONCAT(first_name, ' ', last_name) AS name, a.project_id, start_date, end_date, role, COALESCE(COUNT(c.task_name), 0) AS total_assigned_tasks, tasks_in_progress, tasks_completed
             FROM 
                 Collaboration_T AS a 
                 INNER JOIN User_T AS b ON a.p_user_id = b.user_id
-                INNER JOIN Collaboration_Task_T AS c ON a.p_user_id = c.p_user_id AND a.project_id = c.project_id
+                LEFT JOIN Collaboration_Task_T AS c ON a.p_user_id = c.p_user_id AND a.project_id = c.project_id
                 LEFT JOIN (
-                    SELECT project_id, p_user_id, COUNT(task_name) AS tasks_in_progress 
+                    SELECT project_id, p_user_id, COALESCE(COUNT(task_name), 0) AS tasks_in_progress 
                     FROM Collaboration_Task_T
                     WHERE status = "In Progress"
                     GROUP BY p_user_id, project_id
                 ) AS dt1 ON a.p_user_id = dt1.p_user_id AND a.project_id = dt1.project_id 
                 LEFT JOIN (
-                    SELECT project_id, p_user_id, COUNT(task_name) AS tasks_completed 
+                    SELECT project_id, p_user_id, COALESCE(COUNT(task_name), 0) AS tasks_completed 
                     FROM Collaboration_Task_T
                     WHERE status = "Done"
                     GROUP BY p_user_id, project_id

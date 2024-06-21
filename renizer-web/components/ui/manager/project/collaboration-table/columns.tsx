@@ -54,7 +54,7 @@ export const columns: ColumnDef<ProjectCollaboration>[] = [
             <div>
                 {row.getValue("end_date")
                     ? format(row.getValue("end_date"), "PP")
-                    : ""}
+                    : "-"}
             </div>
         ),
         enableGlobalFilter: false,

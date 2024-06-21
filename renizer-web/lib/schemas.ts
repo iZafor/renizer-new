@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Project } from "@/lib/definitions";
+import { Project, ProjectCollaboration } from "@/lib/definitions";
 
 export type NewProjectFromState =
     | {
@@ -79,15 +79,18 @@ export const InvestmentProposalFormSchema = z.object({
 export type NewCollaboratorFormState =
     | {
           errors?: {
+              projectId?: string[];
               contributor?: string[];
               role?: string[];
           };
           message?: string;
+          newCollaboration?: ProjectCollaboration;
       }
     | undefined;
 
 export const NewCollaboratorFormSchema = z.object({
-    contributor: z.string().length(36, {
+    projectId: z.string().uuid({ message: "Invalid form data." }),
+    contributor: z.string().uuid({
         message: "Contributor must be selected.",
     }),
     role: z.string().min(1, {

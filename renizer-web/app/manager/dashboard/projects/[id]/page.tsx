@@ -21,12 +21,14 @@ interface ProjectProps {
 
 export default async function Project({ params: { id } }: ProjectProps) {
     const queryClient = new QueryClient();
-    await queryClient.prefetchQuery(useProjectDetailsQueryOptions(id));
-    await queryClient.prefetchQuery(useCollaboratorsDetailsQueryOptions(id));
-    await queryClient.prefetchQuery(useProjectCollaborationsQueryOptions(id));
-    await queryClient.prefetchQuery(useInvestorsDetailsQueryOptions());
-    await queryClient.prefetchQuery(useProjectInvestmentsQueryOptions(id));
-    await queryClient.prefetchQuery(useProjectTasksQueryOptions(id));
+    await Promise.all([
+        queryClient.prefetchQuery(useProjectDetailsQueryOptions(id)),
+        queryClient.prefetchQuery(useCollaboratorsDetailsQueryOptions(id)),
+        queryClient.prefetchQuery(useProjectCollaborationsQueryOptions(id)),
+        queryClient.prefetchQuery(useInvestorsDetailsQueryOptions()),
+        queryClient.prefetchQuery(useProjectInvestmentsQueryOptions(id)),
+        queryClient.prefetchQuery(useProjectTasksQueryOptions(id)),
+    ]);
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>

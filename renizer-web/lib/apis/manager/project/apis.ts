@@ -5,28 +5,38 @@ import {
     CollaboratorDetails,
     InvestorDetails,
     ProjectCollaboration,
-    ProjectData,
     ProjectDetails,
     ProjectInvestment,
     ProjectTask,
 } from "@/lib/definitions";
 import { RowDataPacket } from "mysql2";
 
-export async function getProjectData(id: string): Promise<ProjectData> {
+export async function getProjectDetails(projectId: string) {
     try {
-        const res = await pool
-            .query<RowDataPacket[][]>(
+        return await pool
+            .query<RowDataPacket[]>(
                 `
-            -- ProjectDetails
             SELECT 
-                a.project_id, name, description, location, start_date, end_date, status, energy_rate_kwh AS energy_rate, produced_energy_kwh AS energy_produced, energy_sold_kwh AS energy_sold, total_cost, org_restricted, m_p_user_id, creation_date, SUM(investment_amount) AS investment_received
+                a.project_id, name, description, location, start_date, end_date, status, energy_rate_kwh AS energy_rate, produced_energy_kwh AS energy_produced, energy_sold_kwh AS energy_sold, total_cost, org_restricted, m_p_user_id, creation_date, COALESCE(SUM(investment_amount), 0) AS investment_received
             FROM 
                 Project_T AS a
-                INNER JOIN Investor_Invest_Project_T AS b ON a.project_id = b.project_id
+                LEFT JOIN Investor_Invest_Project_T AS b ON a.project_id = b.project_id
             WHERE 
-                a.project_id = '${id}';
+                a.project_id = '${projectId}'    
+        `
+            )
+            .then(([rows]) => rows[0] as ProjectDetails | undefined);
+    } catch (error) {
+        console.error(error);
+        return undefined;
+    }
+}
 
-            -- CollaboratorDetails[]
+export async function getCollaboratorsDetails(projectId: string) {
+    try {
+        return await pool
+            .query<RowDataPacket[]>(
+                `
             SELECT
                 c_p_user_id, CONCAT(first_name, ' ', last_name) AS name, working_department, hourly_rate, working_experience
             FROM 
@@ -36,10 +46,22 @@ export async function getProjectData(id: string): Promise<ProjectData> {
                 WHERE c_p_user_id NOT IN (
                     SELECT DISTINCT(p_user_id)
                     FROM Collaboration_T
-                    WHERE project_id = '${id}'
-                );
+                    WHERE project_id = '${projectId}'
+                )    
+        `
+            )
+            .then(([rows]) => rows as CollaboratorDetails[]);
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+}
 
-            -- ProjectCollaboration[]
+export async function getProjectCollaborations(projectId: string) {
+    try {
+        return await pool
+            .query<RowDataPacket[]>(
+                `
             SELECT 
                 a.p_user_id, CONCAT(first_name, ' ', last_name) AS name, a.project_id, start_date, end_date, role, COUNT(c.task_name) AS total_assigned_tasks, tasks_in_progress, tasks_completed
             FROM 
@@ -59,13 +81,25 @@ export async function getProjectData(id: string): Promise<ProjectData> {
                     GROUP BY p_user_id, project_id
                 ) AS dt2 ON a.p_user_id = dt2.p_user_id AND a.project_id = dt2.project_id
             WHERE 
-                a.project_id = '${id}'
+                a.project_id = '${projectId}'
             GROUP BY
                 a.p_user_id, role, name, a.project_id, start_date, end_date, tasks_in_progress, tasks_completed
             ORDER BY
-                start_date DESC;
+                start_date DESC    
+        `
+            )
+            .then(([rows]) => rows as ProjectCollaboration[]);
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+}
 
-            -- InvestorDetails[]
+export async function getInvestorsDetails() {
+    try {
+        return await pool
+            .query<RowDataPacket[]>(
+                `
             SELECT
                 a.i_user_id, CONCAT(first_name, ' ', last_name) AS investor, investor_type, SUM(investment_amount) AS total_investment, COUNT(DISTINCT(project_id)) AS invested_in_projects
             FROM 
@@ -75,9 +109,21 @@ export async function getProjectData(id: string): Promise<ProjectData> {
             GROUP BY
                 a.i_user_id, investor, investor_type
             ORDER BY 
-                total_investment DESC;
+                total_investment DESC
+        `
+            )
+            .then(([rows]) => rows as InvestorDetails[]);
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+}
 
-            -- ProjectInvestment[]
+export async function getProjectInvestments(projectId: string) {
+    try {
+        return await pool
+            .query<RowDataPacket[]>(
+                `
             SELECT 
                 a.i_user_id, CONCAT(first_name, ' ', last_name) AS investor, a.project_id, a.investment_amount, proposal_date, investment_date, proposal_status
             FROM 
@@ -85,11 +131,23 @@ export async function getProjectData(id: string): Promise<ProjectData> {
                 INNER JOIN User_T AS b ON a.i_user_id = b.user_id
                 LEFT JOIN Investor_Invest_Project_T AS c ON a.i_user_id = c.i_user_id AND a.project_id = c.project_id AND a.investment_amount = c.investment_amount
             WHERE
-                a.project_id = '${id}'
+                a.project_id = '${projectId}'
             ORDER BY
-                investment_date DESC;
+                investment_date DESC
+        `
+            )
+            .then(([rows]) => rows as ProjectInvestment[]);
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+}
 
-            -- ProjectTask[]
+export async function getProjectTasks(projectId: string) {
+    try {
+        return await pool
+            .query<RowDataPacket[]>(
+                `
             SELECT 
                 a.project_id, a.p_user_id, CONCAT(first_name, ' ', last_name) AS assignee, role, task_name AS task, status, assigned_date, expected_hour, expected_delivery_date, hour_taken, delivery_date, priority
             FROM 
@@ -97,22 +155,13 @@ export async function getProjectData(id: string): Promise<ProjectData> {
                 INNER JOIN User_T AS b ON a.p_user_id = b.user_id
                 INNER JOIN Collaboration_T AS c ON a.p_user_id = c.p_user_id AND a.project_id = c.project_id
             WHERE 
-                a.project_id = '${id}';
-                `
+                a.project_id = '${projectId}'
+            `
             )
-            .then(([rows]) => rows);
-
-        return {
-            projectDetails: res[0][0] as ProjectDetails,
-            collaborators: res[1] as CollaboratorDetails[],
-            collaborations: res[2] as ProjectCollaboration[],
-            investors: res[3] as InvestorDetails[],
-            investments: res[4] as ProjectInvestment[],
-            tasks: res[5] as ProjectTask[],
-        };
+            .then(([rows]) => rows as ProjectTask[]);
     } catch (error) {
         console.error(error);
-        return {};
+        return [];
     }
 }
 

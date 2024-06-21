@@ -11,20 +11,21 @@ import { useQuery } from "@tanstack/react-query";
 import ProjectInfo from "@/components/ui/manager/project/project-info";
 import ProjectStakeHolders from "@/components/ui/manager/project/project-stakeholders";
 import { columns } from "@/components/ui/manager/project/task-table/columns";
-import { useProjectDataQueryOptions } from "@/lib/hooks/manager/use-project-data-query";
 import DataTable from "@/components/ui/data-table";
 import TasksTableToolbar from "./task-table/tasks-table-toolbar";
 import { ProjectIdContext } from "@/lib/contexts/manager";
+import {
+    useProjectDetailsQueryOptions,
+    useProjectTasksQueryOptions,
+} from "@/lib/hooks/manager/use-project-query";
 
 interface ProjectViewProps {
     id: string;
 }
 
 export default function ProjectView({ id }: ProjectViewProps) {
-    const { data } = useQuery(useProjectDataQueryOptions(id));
-    const project = data?.projectDetails;
-    const tasks = data?.tasks || [];
-
+    const { data: project } = useQuery(useProjectDetailsQueryOptions(id));
+    const { data: tasks } = useQuery(useProjectTasksQueryOptions(id));
     return (
         <ProjectIdContext.Provider value={id}>
             <Card>
@@ -37,7 +38,7 @@ export default function ProjectView({ id }: ProjectViewProps) {
                     <ProjectStakeHolders />
                     <DataTable
                         columns={columns}
-                        data={tasks}
+                        data={tasks!}
                         toolbar={TasksTableToolbar}
                     />
                 </CardContent>

@@ -78,12 +78,3 @@ export interface ProjectTask {
     delivery_date?: Date;
     priority: string;
 }
-
-export interface ProjectData {
-    projectDetails?: ProjectDetails;
-    collaborators?: CollaboratorDetails[];
-    collaborations?: ProjectCollaboration[];
-    investors?: InvestorDetails[];
-    investments?: ProjectInvestment[];
-    tasks?: ProjectTask[];
-}

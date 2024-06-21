@@ -8,22 +8,25 @@ import InvestmentTable from "@/components/ui/manager/project/investment-table/in
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import { useContext, useEffect, useState } from "react";
 import InvestmentProposalDialog from "@/components/ui/manager/project/investment-proposal-dialog";
-import { useProjectDataQueryOptions } from "@/lib/hooks/manager/use-project-data-query";
 import { useQuery } from "@tanstack/react-query";
-import { ProjectIdContext } from "@/lib/contexts/project";
+import { ProjectIdContext } from "@/lib/contexts/manager";
+import {
+    useInvestorsDetailsQueryOptions,
+    useProjectInvestmentsQueryOptions,
+} from "@/lib/hooks/manager/use-project-query";
 
 export default function ProjectInvestors() {
     const projectId = useContext(ProjectIdContext);
-    const { data } = useQuery(useProjectDataQueryOptions(projectId));
-    // TODO: Handle empty states
-    const investments = data?.investments!;
-    const investors = data?.investors!;
+    const { data: investments } = useQuery(
+        useProjectInvestmentsQueryOptions(projectId)
+    );
+    const { data: investors } = useQuery(useInvestorsDetailsQueryOptions());
 
     const [uniqueInvestors, setUniqueInvestors] = useState<string[]>([]);
 
     useEffect(() => {
         const investorMap: { [key: string]: string } = {};
-        for (const inv of investments) {
+        for (const inv of investments!) {
             investorMap[inv.i_user_id] = inv.investor;
         }
         setUniqueInvestors(Object.values(investorMap));
@@ -51,10 +54,10 @@ export default function ProjectInvestors() {
                     <Button variant="outline">View All</Button>
                 </DialogTrigger>
                 <DialogContent className="min-w-[50rem]">
-                    <InvestmentTable data={investments} columns={columns} />
+                    <InvestmentTable data={investments!} columns={columns} />
                 </DialogContent>
             </Dialog>
-            <InvestmentProposalDialog investors={investors} />
+            <InvestmentProposalDialog investors={investors!} />
         </div>
     );
 }

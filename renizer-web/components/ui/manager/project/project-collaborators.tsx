@@ -8,22 +8,27 @@ import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import CollaborationTable from "@/components/ui/manager/project/collaboration-table/collaboration-table";
 import { columns } from "@/components/ui/manager/project/collaboration-table/columns";
 import NewCollaboratorDialog from "./new-collaborator-dialog";
-import { useProjectDataQueryOptions } from "@/lib/hooks/manager/use-project-data-query";
 import { useQuery } from "@tanstack/react-query";
 import { ProjectIdContext } from "@/lib/contexts/manager";
+import {
+    useCollaboratorsDetailsQueryOptions,
+    useProjectCollaborationsQueryOptions,
+} from "@/lib/hooks/manager/use-project-query";
 
 export default function ProjectCollaborators() {
     const projectId = useContext(ProjectIdContext);
-    const { data } = useQuery(useProjectDataQueryOptions(projectId));
-    // TODO: Handle empty states
-    const collaborations = data?.collaborations!;
-    const collaborators = data?.collaborators!;
+    const { data: collaborations } = useQuery(
+        useProjectCollaborationsQueryOptions(projectId)
+    );
+    const { data: collaborators } = useQuery(
+        useCollaboratorsDetailsQueryOptions(projectId)
+    );
 
     const [uniqueContributors, setUniqueContributors] = useState<string[]>([]);
 
     useEffect(() => {
         const collaboratorMap: { [key: string]: string } = {};
-        for (const co of collaborations) {
+        for (const co of collaborations!) {
             collaboratorMap[co.p_user_id] = co.name;
         }
         setUniqueContributors(Object.values(collaboratorMap));
@@ -53,7 +58,7 @@ export default function ProjectCollaborators() {
                 <DialogContent className="min-w-[70rem]">
                     <div className="mt-6">
                         <CollaborationTable
-                            data={collaborations}
+                            data={collaborations!}
                             columns={columns}
                         />
                     </div>
@@ -61,7 +66,7 @@ export default function ProjectCollaborators() {
             </Dialog>
             <NewCollaboratorDialog
                 projectId={projectId}
-                collaborators={collaborators}
+                collaborators={collaborators!}
             />
         </div>
     );

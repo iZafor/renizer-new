@@ -5,13 +5,13 @@ import { getInitial } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useContext, useEffect, useState } from "react";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
-import CollaborationTable from "@/components/ui/manager/project/collaboration-table/collaboration-table";
 import { columns } from "@/components/ui/manager/project/collaboration-table/columns";
+import DataTable from "@/components/ui/data-table";
+import CollaborationTableToolbar from "./collaboration-table/collaboration-table-tollbar";
 import NewCollaboratorDialog from "./new-collaborator-dialog";
 import { useQuery } from "@tanstack/react-query";
 import { ProjectIdContext } from "@/lib/contexts/manager";
 import {
-    useCollaboratorsDetailsQueryOptions,
     useProjectCollaborationsQueryOptions,
 } from "@/lib/hooks/manager/use-project-query";
 
@@ -20,10 +20,6 @@ export default function ProjectCollaborators() {
     const { data: collaborations } = useQuery(
         useProjectCollaborationsQueryOptions(projectId)
     );
-    const { data: collaborators } = useQuery(
-        useCollaboratorsDetailsQueryOptions(projectId)
-    );
-
     const [uniqueContributors, setUniqueContributors] = useState<string[]>([]);
 
     useEffect(() => {
@@ -57,17 +53,16 @@ export default function ProjectCollaborators() {
                 </DialogTrigger>
                 <DialogContent className="min-w-[70rem]">
                     <div className="mt-6">
-                        <CollaborationTable
-                            data={collaborations!}
+                        <DataTable
+                            className="max-h-[39.5rem]"
                             columns={columns}
+                            data={collaborations!}
+                            toolbar={CollaborationTableToolbar}
                         />
                     </div>
                 </DialogContent>
             </Dialog>
-            <NewCollaboratorDialog
-                projectId={projectId}
-                collaborators={collaborators!}
-            />
+            <NewCollaboratorDialog />
         </div>
     );
 }

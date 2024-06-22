@@ -16,27 +16,25 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { CollaboratorDetails, ProjectCollaboration } from "@/lib/definitions";
-import { useEffect, useState } from "react";
-import CollaboratorsTable from "@/components/ui/manager/project/collaborators-table/collaborators-table";
+import { useContext, useEffect, useState } from "react";
 import { columns } from "@/components/ui/manager/project/collaborators-table/columns";
+import DataTable from "@/components/ui/data-table";
+import CollaboratorsTableToolbar from "./collaborators-table/collaborators-table-toolbar";
 import { cn } from "@/lib/utils";
 import { getMatchingRoles } from "@/lib/apis/manager/project/apis";
 import { NewCollaboratorFormState } from "@/lib/schemas";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
     useCollaboratorsDetailsQueryOptions,
     useProjectCollaborationsQueryOptions,
 } from "@/lib/hooks/manager/use-project-query";
+import { ProjectIdContext } from "@/lib/contexts/manager";
 
-interface NewCollaboratorDialogProps {
-    projectId: string;
-    collaborators: CollaboratorDetails[];
-}
-
-export default function NewCollaboratorDialog({
-    projectId,
-    collaborators,
-}: NewCollaboratorDialogProps) {
+export default function NewCollaboratorDialog() {
+    const projectId = useContext(ProjectIdContext);
+    const { data: collaborators } = useQuery(
+        useCollaboratorsDetailsQueryOptions(projectId)
+    );
     const [selectedContributor, setSelectedContributor] =
         useState<CollaboratorDetails>();
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -141,10 +139,12 @@ export default function NewCollaboratorDialog({
                                     align="start"
                                     className="w-[50rem]"
                                 >
-                                    <CollaboratorsTable
-                                        data={collaborators}
+                                    <DataTable
+                                        className="max-h-[20rem]"
                                         columns={columns}
-                                        onSelect={(contributor) =>
+                                        data={collaborators!}
+                                        toolbar={CollaboratorsTableToolbar}
+                                        onRowClicked={(contributor) =>
                                             setSelectedContributor(contributor)
                                         }
                                     />

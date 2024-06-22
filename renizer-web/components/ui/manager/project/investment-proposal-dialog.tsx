@@ -12,8 +12,9 @@ import {
 } from "@/components/ui/popover";
 import { InvestorDetails, ProjectInvestment } from "@/lib/definitions";
 import { useContext, useEffect, useState } from "react";
-import InvestorsTable from "@/components/ui/manager/project/investors-table/investors-table";
 import { columns } from "@/components/ui/manager/project/investors-table/columns";
+import DataTable from "@/components/ui/data-table";
+import InvestorsTableToolbar from "./investors-table/investors-table-toolbar";
 import { cn } from "@/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -115,10 +116,12 @@ export default function InvestmentProposalDialog() {
                                     align="start"
                                     className="w-[50rem]"
                                 >
-                                    <InvestorsTable
-                                        data={investors!}
+                                    <DataTable
+                                        className="max-h-[10rem]"
                                         columns={columns}
-                                        onSelect={(investor) =>
+                                        data={investors!}
+                                        toolbar={InvestorsTableToolbar}
+                                        onRowClicked={(investor) =>
                                             setSelectedInvestor(investor)
                                         }
                                     />

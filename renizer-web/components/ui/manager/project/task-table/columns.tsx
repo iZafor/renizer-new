@@ -4,7 +4,7 @@ import { TableHeader } from "@/components/ui/table-header";
 import { PriorityIcon, StatusIcon } from "@/components/ui/icons";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { getInitial } from "@/lib/utils";
-import TaskDetails from "./task-details";
+import TaskDetails from "../task-details/task-details";
 import { format } from "date-fns";
 
 export const columns: ColumnDef<ProjectTask>[] = [

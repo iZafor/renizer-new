@@ -104,3 +104,73 @@ export const NewCollaboratorFormSchema = z.object({
         message: "Role cannot be empty.",
     }),
 });
+
+export type NewExpectedDeliveryDateFormState =
+    | {
+          errors?: {
+              pUserId?: string[];
+              projectId?: string[];
+              taskName?: string;
+              assignedDate?: string[];
+              newExpectedDeliveryDate?: string[];
+          };
+          message?: string[];
+          newExpectedDeliveryDate?: string;
+      }
+    | undefined;
+
+export const NewExpectedDeliveryDateFormSchema = z.object({
+    projectId: z.string().uuid({ message: "Invalid form data." }),
+    pUserId: z.string().uuid({ message: "Invalid form data." }),
+    assignedDate: z.date({ message: "Invalid form data." }),
+    taskName: z.string().min(1, { message: "Invalid form data." }),
+    newExpectedDeliveryDate: z.date({ message: "Invalid date format." }),
+});
+
+export type NewTaskStatusFormState =
+    | {
+          errors?: {
+              pUserId?: string[];
+              projectId?: string[];
+              taskName?: string;
+              assignedDate?: string[];
+              newStatus?: string[];
+          };
+          message?: string[];
+          newStatus?: string;
+      }
+    | undefined;
+
+export const NewTaskStatusFormSchema = z.object({
+    projectId: z.string().uuid({ message: "Invalid form data." }),
+    pUserId: z.string().uuid({ message: "Invalid form data." }),
+    assignedDate: z.date({ message: "Invalid form data." }),
+    taskName: z.string().min(1, { message: "Invalid form data." }),
+    newStatus: z.enum(["In Progress", "Done", "Cancelled"], {
+        message: "Invalid status.",
+    }),
+});
+
+export type NewTaskPriorityFormState =
+    | {
+          errors?: {
+              pUserId?: string[];
+              projectId?: string[];
+              taskName?: string;
+              assignedDate?: string[];
+              newPriority?: string[];
+          };
+          message?: string[];
+          newPriority?: string;
+      }
+    | undefined;
+
+export const NewTaskPriorityFormSchema = z.object({
+    projectId: z.string().uuid({ message: "Invalid form data." }),
+    pUserId: z.string().uuid({ message: "Invalid form data." }),
+    assignedDate: z.date({ message: "Invalid form data." }),
+    taskName: z.string().min(1, { message: "Invalid form data." }),
+    newPriority: z.enum(["High", "Medium", "Low"], {
+        message: "Invalid priority.",
+    }),
+});

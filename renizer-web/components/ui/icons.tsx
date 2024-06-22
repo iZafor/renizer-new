@@ -24,7 +24,7 @@ export function StatusIcon({
             return <Timer className={cn("h-4 w-4", className)} />;
         case "Done":
             return <CircleCheck className={cn("h-4 w-4", className)} />;
-        case "Canceled":
+        case "Cancelled":
             return <CircleX className={cn("h-4 w-4", className)} />;
         case "Not Started Yet":
             return <CircleEllipsis className={cn("h-4 w-4", className)} />;

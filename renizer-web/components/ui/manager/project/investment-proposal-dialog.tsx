@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronsUpDown, PlusIcon } from "lucide-react";
+import { ChevronsUpDown, CircleAlert, PlusIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
@@ -10,26 +10,61 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { InvestorDetails } from "@/lib/definitions";
-import { useEffect, useState } from "react";
+import { InvestorDetails, ProjectInvestment } from "@/lib/definitions";
+import { useContext, useEffect, useState } from "react";
 import InvestorsTable from "@/components/ui/manager/project/investors-table/investors-table";
 import { columns } from "@/components/ui/manager/project/investors-table/columns";
-import { useFormState } from "react-dom";
-import { proposeInvestment } from "@/lib/actions/manager/project/actions";
 import { cn } from "@/lib/utils";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+    useInvestorsDetailsQueryOptions,
+    useProjectInvestmentsQueryOptions,
+} from "@/lib/hooks/manager/use-project-query";
+import { InvestmentProposalFormState } from "@/lib/schemas";
+import { ProjectIdContext } from "@/lib/contexts/manager";
 
-interface InvestmentProposalDialogProps {
-    investors: InvestorDetails[];
-}
-
-export default function InvestmentProposalDialog({
-    investors,
-}: InvestmentProposalDialogProps) {
+export default function InvestmentProposalDialog() {
+    const { data: investors } = useQuery(useInvestorsDetailsQueryOptions());
+    const projectId = useContext(ProjectIdContext);
     const [selectedInvestor, setSelectedInvestor] = useState<InvestorDetails>();
+    const [dialogOpen, setDialogOpen] = useState(false);
     const [open, setOpen] = useState(false);
     const [investor, setInvestor] = useState("");
     const [value, setValue] = useState("");
-    const [state, action] = useFormState(proposeInvestment, undefined);
+    const [state, setState] = useState<InvestmentProposalFormState>(undefined);
+    const projectInvestmentsQueryKey =
+        useProjectInvestmentsQueryOptions(projectId).queryKey;
+    const queryClient = useQueryClient();
+    const mutation = useMutation({
+        mutationFn: async (formData: FormData) =>
+            await fetch("/api/manager/dashboard/project/propose-investment", {
+                method: "POST",
+                body: formData,
+            }).then((res) => res.json()),
+        onSuccess: (data: InvestmentProposalFormState) => {
+            if (data?.newInvestment) {
+                queryClient.setQueryData(
+                    projectInvestmentsQueryKey,
+                    (old: ProjectInvestment[]) => [
+                        {
+                            ...data.newInvestment,
+                            proposal_date: new Date(
+                                data.newInvestment?.proposal_date!
+                            ),
+                        },
+                        ...old,
+                    ]
+                );
+
+                setValue("");
+                setSelectedInvestor(undefined);
+                setInvestor("");
+                setOpen(false);
+                setDialogOpen(false);
+            }
+            setState(data);
+        },
+    });
 
     useEffect(() => {
         setInvestor(selectedInvestor?.i_user_id!);
@@ -38,7 +73,7 @@ export default function InvestmentProposalDialog({
     }, [selectedInvestor]);
 
     return (
-        <Dialog>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
                 <Button variant="outline" size="icon">
                     <PlusIcon className="size-4" />
@@ -46,7 +81,13 @@ export default function InvestmentProposalDialog({
             </DialogTrigger>
             <DialogContent>
                 <h3 className="text-xl font-bold">Propose investment</h3>
-                <form className="space-y-4 mt-4" action={action}>
+                <form
+                    className="space-y-4 mt-4"
+                    onSubmit={(ev) => {
+                        ev.preventDefault();
+                        mutation.mutate(new FormData(ev.currentTarget));
+                    }}
+                >
                     <div className="space-y-1.5">
                         <Label
                             className={cn("font-semibold", {
@@ -75,7 +116,7 @@ export default function InvestmentProposalDialog({
                                     className="w-[50rem]"
                                 >
                                     <InvestorsTable
-                                        data={investors}
+                                        data={investors!}
                                         columns={columns}
                                         onSelect={(investor) =>
                                             setSelectedInvestor(investor)
@@ -90,6 +131,7 @@ export default function InvestmentProposalDialog({
                             )}
                         </div>
                     </div>
+                    <Input type="hidden" name="projectId" value={projectId} />
                     <Input type="hidden" name="investor" value={investor} />
                     <div className="space-y-1.5">
                         <Label
@@ -107,7 +149,25 @@ export default function InvestmentProposalDialog({
                             </p>
                         )}
                     </div>
-                    <Button>Submit</Button>
+                    <Button type="submit" disabled={mutation.isPending}>
+                        Submit
+                    </Button>
+                    {state?.errors?.projectId && (
+                        <div className="flex items-center space-x-1.5">
+                            <CircleAlert className="size-4 fill-destructive stroke-background" />
+                            <p className="text-sm text-destructive font-semibold">
+                                {state.errors.projectId}
+                            </p>
+                        </div>
+                    )}
+                    {state?.message && (
+                        <div className="flex items-center space-x-1.5">
+                            <CircleAlert className="size-4 fill-destructive stroke-background" />
+                            <p className="text-sm text-destructive font-semibold">
+                                {state.message}
+                            </p>
+                        </div>
+                    )}
                 </form>
             </DialogContent>
         </Dialog>

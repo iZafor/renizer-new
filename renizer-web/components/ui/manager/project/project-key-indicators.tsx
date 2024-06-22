@@ -24,7 +24,7 @@ export default function ProjectKeyIndicators({
         <div className="grid grid-cols-2 gap-4">
             <KeyIndicatorContainer
                 title="Creation Date"
-                data={format(project?.creation_date || "", "PP")}
+                data={format(project?.creation_date!, "PP")}
             />
             <KeyIndicatorContainer
                 title="Project Started at"

@@ -133,7 +133,7 @@ export async function getProjectInvestments(projectId: string) {
             WHERE
                 a.project_id = '${projectId}'
             ORDER BY
-                investment_date DESC
+                proposal_date DESC
         `
             )
             .then(([rows]) => rows as ProjectInvestment[]);

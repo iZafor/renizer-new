@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { Project, ProjectCollaboration } from "@/lib/definitions";
+import {
+    Project,
+    ProjectCollaboration,
+    ProjectInvestment,
+} from "@/lib/definitions";
 
 export type NewProjectFromState =
     | {
@@ -60,18 +64,21 @@ export const UpdateSoldEnergyFormSchema = z.object({
 export type InvestmentProposalFormState =
     | {
           errors?: {
+              projectId?: string[];
               investor?: string[];
               amount?: string[];
           };
           message?: string;
+          newInvestment?: ProjectInvestment;
       }
     | undefined;
 
 export const InvestmentProposalFormSchema = z.object({
-    investor: z.string().length(36, {
+    projectId: z.string().uuid({ message: "Invalid form data." }),
+    investor: z.string().uuid({
         message: "Investor must be selected.",
     }),
-    amount: z.number().min(1, {
+    amount: z.number().gt(0, {
         message: "Amount must be greater than 0.",
     }),
 });

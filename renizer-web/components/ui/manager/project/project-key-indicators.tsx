@@ -1,4 +1,4 @@
-import { ProjectDetails } from "@/lib/definitions";
+import { Project, ProjectDetails } from "@/lib/definitions";
 import { formatEnergyUnit } from "@/lib/utils";
 import { format } from "date-fns";
 import {
@@ -8,14 +8,17 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { useProjectDetailsQueryOptions } from "@/lib/hooks/manager/use-project-query";
 import { useContext } from "react";
-import { ProjectIdContext } from "@/lib/contexts/manager";
+import { ManagerIdContext, ProjectIdContext } from "@/lib/contexts/manager";
+import { useProjectsQueryOptions } from "@/lib/hooks/manager/use-projects-query";
 
 export default function ProjectKeyIndicators({
     project,
 }: {
     project: ProjectDetails | undefined;
 }) {
+    const managerId = useContext(ManagerIdContext);
     const projectId = useContext(ProjectIdContext);
+    const projectsQueryKey = useProjectsQueryOptions(managerId).queryKey;
     const projectDetailsQueryKey =
         useProjectDetailsQueryOptions(projectId).queryKey;
     const queryClient = useQueryClient();
@@ -82,6 +85,21 @@ export default function ProjectKeyIndicators({
                             energy_produced: data?.updatedValue,
                         })
                     );
+                    queryClient.setQueryData(
+                        projectsQueryKey,
+                        (old: Project[]) =>
+                            old
+                                ? old.map((p) =>
+                                      p.project_id === projectId
+                                          ? {
+                                                ...p,
+                                                energy_produced:
+                                                    data?.updatedValue,
+                                            }
+                                          : p
+                                  )
+                                : old
+                    );
                 }}
             />
             <EditableKeyIndicatorContainer
@@ -104,6 +122,20 @@ export default function ProjectKeyIndicators({
                             ...old,
                             energy_sold: data?.updatedValue,
                         })
+                    );
+                    queryClient.setQueryData(
+                        projectsQueryKey,
+                        (old: Project[]) =>
+                            old
+                                ? old.map((p) =>
+                                      p.project_id === projectId
+                                          ? {
+                                                ...p,
+                                                energy_sold: data?.updatedValue,
+                                            }
+                                          : p
+                                  )
+                                : old
                     );
                 }}
             />

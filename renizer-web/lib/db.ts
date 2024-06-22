@@ -7,7 +7,7 @@ export const pool = mysql.createPool({
     port: Number(process.env.REnizer_DB_PORT),
     database: "REnizer_next",
     connectionLimit: 20,
-    connectTimeout: 60000,
+    connectTimeout: 10000,
     multipleStatements: true,
     decimalNumbers: true,
 });

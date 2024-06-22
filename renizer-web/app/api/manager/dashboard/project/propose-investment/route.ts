@@ -33,11 +33,11 @@ export async function POST(req: NextRequest) {
                 [validatedData.data.investor, validatedData.data.projectId]
             )
             .then(([rows]) => rows);
-        console.log(res);
+
         if (!res[0][0] || !res[0][0].name) {
             return Response.json({ message: "Investor doesn't exist." });
         }
-        if(!res[1][0] || !res[1][0].name) {
+        if (!res[1][0] || !res[1][0].name) {
             return Response.json({ message: "Project doesn't exist." });
         }
 

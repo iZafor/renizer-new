@@ -10,13 +10,9 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import ProjectKeyIndicators from "@/components/ui/manager/project/project-key-indicators";
 import ProjectStakeHolders from "@/components/ui/manager/project/project-stakeholders";
-import { columns } from "@/components/ui/manager/project/task-table/columns";
-import DataTable from "@/components/ui/data-table";
-import TasksTableToolbar from "./task-table/tasks-table-toolbar";
 import { ProjectIdContext } from "@/lib/contexts/manager";
 import {
     useProjectDetailsQueryOptions,
-    useProjectTasksQueryOptions,
 } from "@/lib/hooks/manager/use-project-query";
 
 interface ProjectViewProps {
@@ -25,7 +21,6 @@ interface ProjectViewProps {
 
 export default function ProjectView({ id }: ProjectViewProps) {
     const { data: project } = useQuery(useProjectDetailsQueryOptions(id));
-    const { data: tasks } = useQuery(useProjectTasksQueryOptions(id));
     return (
         <ProjectIdContext.Provider value={id}>
             <Card>
@@ -36,11 +31,6 @@ export default function ProjectView({ id }: ProjectViewProps) {
                 <CardContent className="space-y-4">
                     <ProjectKeyIndicators project={project} />
                     <ProjectStakeHolders />
-                    <DataTable
-                        columns={columns}
-                        data={tasks!}
-                        toolbar={TasksTableToolbar}
-                    />
                 </CardContent>
             </Card>
         </ProjectIdContext.Provider>

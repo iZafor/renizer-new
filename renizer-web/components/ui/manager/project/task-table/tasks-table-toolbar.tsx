@@ -21,7 +21,7 @@ export default function TasksTableToolbar<TData>({
         <div className="flex items-center justify-between">
             <div className="flex flex-1 items-center space-x-2">
                 <Input
-                    placeholder="Filter tasks..."
+                    placeholder="Filter task/assignee..."
                     onChange={(event) => {
                         table.setGlobalFilter(event.target.value)
                     }}

@@ -23,7 +23,7 @@ export default function InvestmentTableToolbar<TData>({
         <div className="flex items-center justify-between">
             <div className="flex flex-1 items-center space-x-2">
                 <Input
-                    placeholder="Filter investments..."
+                    placeholder="Filter investor..."
                     onChange={(event) => {
                         table.setGlobalFilter(event.target.value);
                     }}

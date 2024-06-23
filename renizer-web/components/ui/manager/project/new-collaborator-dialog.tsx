@@ -102,7 +102,7 @@ export default function NewCollaboratorDialog() {
                 </Button>
             </DialogTrigger>
             <DialogContent>
-                <h3 className="text-xl font-bold">Propose investment</h3>
+                <h3 className="text-xl font-bold">Add New Contributor</h3>
                 <form
                     className="space-y-[1.25rem] mt-[1.25rem]"
                     onSubmit={(ev) => {

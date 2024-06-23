@@ -21,11 +21,9 @@ export default function InvestorsTableToolbar<TData>({
         <div className="flex items-center justify-between">
             <div className="flex flex-1 items-center space-x-2">
                 <Input
-                    placeholder="Filter investor..."
+                    placeholder="Filter investor/investor type..."
                     onChange={(event) =>
-                        table
-                            .getColumn("investor")
-                            ?.setFilterValue(event.target.value)
+                        table.setGlobalFilter(event.target.value)
                     }
                     className="h-8 w-[150px] lg:w-[250px]"
                 />

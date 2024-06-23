@@ -15,7 +15,7 @@ export async function GET() {
             FROM Collaboration_Task_T AS a INNER JOIN Project_T AS b ON a.project_id = b.project_id
             GROUP BY b.name;
 
-            SELECT b.name, SUM(ABS(DATEDIFF(a.expected_day, a.delivery_date))) AS daysTaken
+            SELECT b.name, SUM(ABS(DATEDIFF(a.expected_delivery_date, a.delivery_date))) AS daysTaken
             FROM Collaboration_Task_T AS a INNER JOIN Project_T AS b ON a.project_id = b.project_id
             GROUP BY b.name;
             `

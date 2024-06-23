@@ -1,5 +1,5 @@
 import * as React from "react";
-import { CheckIcon, PlusCircledIcon } from "@radix-ui/react-icons";
+import { CheckIcon } from "@radix-ui/react-icons";
 import { Column } from "@tanstack/react-table";
 
 import { cn } from "@/lib/utils";
@@ -20,6 +20,7 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
+import { ListFilter } from "lucide-react";
 
 interface TableFacetedFilterProps<TData, TValue> {
     column?: Column<TData, TValue>;
@@ -47,7 +48,7 @@ export function TableFacetedFilter<TData, TValue>({
                     size="sm"
                     className="h-8 border-dashed"
                 >
-                    <PlusCircledIcon className="mr-2 h-4 w-4" />
+                    <ListFilter className="mr-2 h-4 w-4" />
                     {title}
                     {selectedValues?.size > 0 && (
                         <>

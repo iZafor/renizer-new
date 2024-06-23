@@ -78,3 +78,24 @@ export interface ProjectTask {
     delivery_date?: Date;
     priority: string;
 }
+
+export interface ProjectOverviewAnalytics {
+    activeProjects: number;
+    completedProjects: number;
+    projectsInProgress: number;
+    projectsInOverdue: number;
+}
+
+export interface TaskStatusAnalytics {
+    // Project Name
+    [key: string]: {
+        [key: string]: number; // Status: Status Count
+    };
+}
+
+export interface TaskPerformanceAnalytics {
+    // Project Name
+    [key: string]: {
+        [key: string]: number; // Metric: Count
+    };
+}

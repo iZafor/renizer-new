@@ -9,28 +9,32 @@ import {
 interface OverviewCardProps {
     className?: string;
     title: string;
-    TitleIcon?: () => React.JSX.Element;
+    titleIcon?: React.ElementType<{ className?: string }>;
     description: string;
-    DescriptionIcon?: () => React.JSX.Element;
+    descriptionIcon?: React.ElementType<{ className?: string }>;
     footer?: string;
 }
 
 export default function OverviewCard({
     className,
     title,
-    TitleIcon = () => <></>,
+    titleIcon: TitleIcon,
     description,
-    DescriptionIcon = () => <></>,
+    descriptionIcon: DescriptionIcon,
     footer,
 }: OverviewCardProps) {
     return (
         <Card className={className}>
-            <CardHeader className="flex justify-between items-center">
-                <CardTitle>{title}</CardTitle>
-                <TitleIcon />
+            <CardHeader>
+                <div className="flex items-center justify-between">
+                    <CardTitle>{title}</CardTitle>
+                    {TitleIcon && (
+                        <TitleIcon className="text-muted-foreground size-6" />
+                    )}
+                </div>
             </CardHeader>
             <CardContent className="flex gap-2 items-center">
-                <DescriptionIcon />
+                {DescriptionIcon && <DescriptionIcon />}
                 <p className="font-2xl font-bold">{description}</p>
             </CardContent>
             <CardFooter>

@@ -1,7 +1,6 @@
-import { pool } from "@/lib/db";
+import { parseToPlainObject, db, QueryResult } from "@/lib/db";
 import { ProjectCollaboration } from "@/lib/definitions";
 import { NewCollaboratorFormSchema } from "@/lib/schemas";
-import { RowDataPacket } from "mysql2";
 import { NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -20,8 +19,8 @@ export async function POST(req: NextRequest) {
 
     try {
         // check for role existence
-        const res = await pool
-            .query<RowDataPacket[][]>(
+        const res = await db
+            .query<QueryResult[][]>(
                 `
             SELECT * 
             FROM Collaboration_T
@@ -37,7 +36,7 @@ export async function POST(req: NextRequest) {
                     validatedData.data.contributor,
                 ]
             )
-            .then(([rows]) => rows);
+            .then((rows) => rows.map(parseToPlainObject));
 
         if (res[0].length) {
             return Response.json({ message: "Role already exits." });
@@ -56,7 +55,7 @@ export async function POST(req: NextRequest) {
             tasks_in_progress: 0,
             tasks_completed: 0,
         };
-        await pool.query(
+        await db.query(
             `
             INSERT INTO Collaboration_T (p_user_id, project_id, start_date, role)
             VALUES(?, ?, ?, ?)
@@ -68,6 +67,8 @@ export async function POST(req: NextRequest) {
                 newCollaboration.role,
             ]
         );
+
+        await db.end();
         return Response.json({ newCollaboration });
     } catch (error) {
         console.error(error);

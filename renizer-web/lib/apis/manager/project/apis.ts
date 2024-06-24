@@ -1,6 +1,6 @@
 "use server";
 
-import { pool } from "@/lib/db";
+import { parseToPlainObject, db, QueryResult } from "@/lib/db";
 import {
     CollaboratorDetails,
     InvestorDetails,
@@ -9,12 +9,11 @@ import {
     ProjectInvestment,
     ProjectTask,
 } from "@/lib/definitions";
-import { RowDataPacket } from "mysql2";
 
 export async function getProjectDetails(projectId: string) {
     try {
-        return await pool
-            .query<RowDataPacket[]>(
+        const res = await db
+            .query<QueryResult[]>(
                 `
             SELECT 
                 a.project_id, name, description, location, start_date, end_date, status, energy_rate_kwh AS energy_rate, produced_energy_kwh AS energy_produced, energy_sold_kwh AS energy_sold, total_cost, org_restricted, m_p_user_id, creation_date, COALESCE(SUM(investment_amount), 0) AS investment_received
@@ -25,7 +24,14 @@ export async function getProjectDetails(projectId: string) {
                 a.project_id = '${projectId}'    
         `
             )
-            .then(([rows]) => rows[0] as ProjectDetails | undefined);
+            .then(
+                (rows) =>
+                    parseToPlainObject(rows)[0] as unknown as
+                        | ProjectDetails
+                        | undefined
+            );
+        await db.end();
+        return res;
     } catch (error) {
         console.error(error);
         return undefined;
@@ -34,8 +40,8 @@ export async function getProjectDetails(projectId: string) {
 
 export async function getCollaboratorsDetails(projectId: string) {
     try {
-        return await pool
-            .query<RowDataPacket[]>(
+        const res = (await db
+            .query<QueryResult[]>(
                 `
             SELECT
                 c_p_user_id, CONCAT(first_name, ' ', last_name) AS name, working_department, hourly_rate, working_experience
@@ -50,7 +56,9 @@ export async function getCollaboratorsDetails(projectId: string) {
                 )    
         `
             )
-            .then(([rows]) => rows as CollaboratorDetails[]);
+            .then(parseToPlainObject)) as CollaboratorDetails[];
+        await db.end();
+        return res;
     } catch (error) {
         console.error(error);
         return [];
@@ -59,8 +67,8 @@ export async function getCollaboratorsDetails(projectId: string) {
 
 export async function getProjectCollaborations(projectId: string) {
     try {
-        return await pool
-            .query<RowDataPacket[]>(
+        const res = (await db
+            .query<QueryResult[]>(
                 `
             SELECT 
                 a.p_user_id, CONCAT(first_name, ' ', last_name) AS name, a.project_id, start_date, end_date, role, COALESCE(COUNT(c.task_name), 0) AS total_assigned_tasks, tasks_in_progress, tasks_completed
@@ -88,7 +96,9 @@ export async function getProjectCollaborations(projectId: string) {
                 start_date DESC    
         `
             )
-            .then(([rows]) => rows as ProjectCollaboration[]);
+            .then(parseToPlainObject)) as ProjectCollaboration[];
+        await db.end();
+        return res;
     } catch (error) {
         console.error(error);
         return [];
@@ -97,8 +107,8 @@ export async function getProjectCollaborations(projectId: string) {
 
 export async function getInvestorsDetails() {
     try {
-        return await pool
-            .query<RowDataPacket[]>(
+        const res = (await db
+            .query<QueryResult[]>(
                 `
             SELECT
                 a.i_user_id, CONCAT(first_name, ' ', last_name) AS investor, investor_type, SUM(investment_amount) AS total_investment, COUNT(DISTINCT(project_id)) AS invested_in_projects
@@ -112,7 +122,9 @@ export async function getInvestorsDetails() {
                 total_investment DESC
         `
             )
-            .then(([rows]) => rows as InvestorDetails[]);
+            .then(parseToPlainObject)) as InvestorDetails[];
+        await db.end();
+        return res;
     } catch (error) {
         console.error(error);
         return [];
@@ -121,8 +133,8 @@ export async function getInvestorsDetails() {
 
 export async function getProjectInvestments(projectId: string) {
     try {
-        return await pool
-            .query<RowDataPacket[]>(
+        const res = (await db
+            .query<QueryResult[]>(
                 `
             SELECT 
                 a.i_user_id, CONCAT(first_name, ' ', last_name) AS investor, a.project_id, a.investment_amount, proposal_date, investment_date, proposal_status
@@ -136,7 +148,9 @@ export async function getProjectInvestments(projectId: string) {
                 proposal_date DESC
         `
             )
-            .then(([rows]) => rows as ProjectInvestment[]);
+            .then(parseToPlainObject)) as ProjectInvestment[];
+        await db.end();
+        return res;
     } catch (error) {
         console.error(error);
         return [];
@@ -145,8 +159,8 @@ export async function getProjectInvestments(projectId: string) {
 
 export async function getProjectTasks(projectId: string) {
     try {
-        return await pool
-            .query<RowDataPacket[]>(
+        const res = (await db
+            .query<QueryResult[]>(
                 `
             SELECT 
                 a.project_id, a.p_user_id, CONCAT(first_name, ' ', last_name) AS assignee, role, task_name AS task, status, assigned_date, expected_hour, expected_delivery_date, hour_taken, delivery_date, priority
@@ -158,7 +172,9 @@ export async function getProjectTasks(projectId: string) {
                 a.project_id = '${projectId}'
             `
             )
-            .then(([rows]) => rows as ProjectTask[]);
+            .then(parseToPlainObject)) as ProjectTask[];
+        await db.end();
+        return res;
     } catch (error) {
         console.error(error);
         return [];
@@ -172,7 +188,7 @@ export async function updateEnergyRate({
     projectId: string;
     newRate: number;
 }) {
-    await pool.query(`
+    await db.query(`
             UPDATE Project_T
             SET energy_rate_kwh = ${newRate}
             WHERE project_id = '${projectId}'    
@@ -181,8 +197,8 @@ export async function updateEnergyRate({
 
 export async function getMatchingRoles(project_id: string, role: string) {
     try {
-        const queryRes = await pool
-            .query({
+        const queryRes = await db
+            .query<QueryResult[]>({
                 sql: `
                 SELECT role
                 FROM Collaboration_T
@@ -190,7 +206,8 @@ export async function getMatchingRoles(project_id: string, role: string) {
                 `,
                 rowsAsArray: true,
             })
-            .then(([rows, _]) => rows);
+            .then(parseToPlainObject);
+        await db.end();
         return queryRes as unknown as string[];
     } catch (error) {
         console.error(error);

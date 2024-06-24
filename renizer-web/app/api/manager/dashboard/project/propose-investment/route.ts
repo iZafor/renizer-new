@@ -1,7 +1,6 @@
-import { pool } from "@/lib/db";
+import { parseToPlainObject, db, QueryResult } from "@/lib/db";
 import { ProjectInvestment } from "@/lib/definitions";
 import { InvestmentProposalFormSchema } from "@/lib/schemas";
-import { RowDataPacket } from "mysql2";
 import { NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -19,8 +18,8 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-        const res = await pool
-            .query<RowDataPacket[][]>(
+        const res = await db
+            .query<QueryResult[][]>(
                 `
             SELECT CONCAT(first_name, ' ', last_name) as name
             FROM User_T
@@ -32,7 +31,7 @@ export async function POST(req: NextRequest) {
             `,
                 [validatedData.data.investor, validatedData.data.projectId]
             )
-            .then(([rows]) => rows);
+            .then((rows) => rows.map(parseToPlainObject));
 
         if (!res[0][0] || !res[0][0].name) {
             return Response.json({ message: "Investor doesn't exist." });
@@ -49,7 +48,7 @@ export async function POST(req: NextRequest) {
             proposal_date: new Date(),
             proposal_status: "Pending",
         };
-        await pool.query(
+        await db.query(
             `
             INSERT INTO Investment_Proposal_T (i_user_id, project_id, investment_amount, proposal_date)
             VALUES(?, ?, ?, ?)
@@ -61,6 +60,8 @@ export async function POST(req: NextRequest) {
                 newInvestment.proposal_date,
             ]
         );
+
+        await db.end();
         return Response.json({ newInvestment });
     } catch (error) {
         console.error(error);

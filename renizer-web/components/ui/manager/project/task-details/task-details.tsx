@@ -92,6 +92,7 @@ export default function TaskDetails({ className, task }: TaskDetailsProps) {
                 });
             }
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [taskDeletionState]);
 
     return (

@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { UpdateProducedEnergyFormSchema } from "@/lib/schemas";
-import { pool } from "@/lib/db";
+import { db } from "@/lib/db";
 
 export async function PATCH(req: NextRequest) {
     const formData = await req.formData();
@@ -16,7 +16,7 @@ export async function PATCH(req: NextRequest) {
     }
 
     try {
-        await pool.query(
+        await db.query(
             `
             UPDATE
             Project_T
@@ -25,6 +25,7 @@ export async function PATCH(req: NextRequest) {
         `,
             [validatedData.data.value, validatedData.data.projectId]
         );
+        await db.end();
         return Response.json({ updatedValue: validatedData.data.value });
     } catch (error) {
         console.error(error);

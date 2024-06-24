@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { NewExpectedDeliveryDateFormSchema } from "@/lib/schemas";
-import { pool } from "@/lib/db";
+import { db } from "@/lib/db";
 
 export async function PATCH(req: NextRequest) {
     const body = await req.json();
@@ -20,7 +20,7 @@ export async function PATCH(req: NextRequest) {
     }
 
     try {
-        await pool.query(
+        await db.query(
             `
             UPDATE
             Collaboration_Task_T
@@ -35,6 +35,7 @@ export async function PATCH(req: NextRequest) {
                 validatedData.data.taskName,
             ]
         );
+        await db.end();
         return Response.json({
             newExpectedDeliveryDate: validatedData.data.newExpectedDeliveryDate,
         });

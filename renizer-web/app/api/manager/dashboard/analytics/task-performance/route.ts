@@ -1,11 +1,10 @@
-import { pool } from "@/lib/db";
-import { RowDataPacket } from "mysql2";
+import { parseToPlainObject, db, QueryResult } from "@/lib/db";
 import { TaskPerformanceAnalytics } from "@/lib/definitions";
 
 export async function GET() {
     try {
-        const queryRes = await pool
-            .query<RowDataPacket[][]>(
+        const queryRes = await db
+            .query<QueryResult[][]>(
                 `
             SELECT b.name, COUNT(*) AS totalTasks
             FROM Collaboration_Task_T AS a INNER JOIN Project_T AS b ON a.project_id = b.project_id
@@ -20,18 +19,18 @@ export async function GET() {
             GROUP BY b.name;
             `
             )
-            .then(([rows, _]) => rows);
+            .then((rows) => rows.map(parseToPlainObject));
 
         const res: TaskPerformanceAnalytics = {};
         for (const row of queryRes[0]) {
-            const { name, totalTasks } = row as {
+            const { name, totalTasks } = row as unknown as {
                 name: string;
                 totalTasks: number;
             };
             res[name] = { "Total Tasks": totalTasks };
         }
         for (const row of queryRes[1]) {
-            const { name, contributors } = row as {
+            const { name, contributors } = row as unknown as {
                 name: string;
                 contributors: number;
             };
@@ -39,7 +38,7 @@ export async function GET() {
                 res[name]["Total Tasks"] / contributors;
         }
         for (const row of queryRes[2]) {
-            const { name, daysTaken } = row as {
+            const { name, daysTaken } = row as unknown as {
                 name: string;
                 daysTaken: number;
             };
@@ -47,6 +46,7 @@ export async function GET() {
                 res[name]["Total Tasks"] / daysTaken;
         }
 
+        await db.end();
         return Response.json(res);
     } catch (error) {
         console.error(error);

@@ -1,11 +1,10 @@
-import { pool } from "@/lib/db";
-import { RowDataPacket } from "mysql2";
+import { parseToPlainObject, db, QueryResult } from "@/lib/db";
 import { TaskStatusAnalytics } from "@/lib/definitions";
 
 export async function GET() {
     try {
-        const queryRes = await pool
-            .query<RowDataPacket[][]>(
+        const queryRes = await db
+            .query<QueryResult[][]>(
                 `
             SELECT b.name, COUNT(*) AS inProgressTasks
             FROM Collaboration_Task_T AS a INNER JOIN Project_T AS b ON a.project_id = b.project_id
@@ -33,11 +32,11 @@ export async function GET() {
             GROUP BY b.name;
             `
             )
-            .then(([rows, _]) => rows);
+            .then((rows) => rows.map(parseToPlainObject));
 
         const res: TaskStatusAnalytics = {};
         for (const row of queryRes[0]) {
-            const { name, inProgressTasks } = row as {
+            const { name, inProgressTasks } = row as unknown as {
                 name: string;
                 inProgressTasks: number;
             };
@@ -45,7 +44,7 @@ export async function GET() {
         }
 
         for (const row of queryRes[1]) {
-            const { name, doneTasks } = row as {
+            const { name, doneTasks } = row as unknown as {
                 name: string;
                 doneTasks: number;
             };
@@ -53,7 +52,7 @@ export async function GET() {
         }
 
         for (const row of queryRes[2]) {
-            const { name, cancelledTasks } = row as {
+            const { name, cancelledTasks } = row as unknown as {
                 name: string;
                 cancelledTasks: number;
             };
@@ -61,7 +60,7 @@ export async function GET() {
         }
 
         for (const row of queryRes[3]) {
-            const { name, notStartedYetTasks } = row as {
+            const { name, notStartedYetTasks } = row as unknown as {
                 name: string;
                 notStartedYetTasks: number;
             };
@@ -69,13 +68,14 @@ export async function GET() {
         }
 
         for (const row of queryRes[4]) {
-            const { name, overdueTasks } = row as {
+            const { name, overdueTasks } = row as unknown as {
                 name: string;
                 overdueTasks: number;
             };
             res[name]["Overdue"] = overdueTasks;
         }
 
+        await db.end();
         return Response.json(res);
     } catch (error) {
         console.error(error);

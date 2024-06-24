@@ -1,11 +1,10 @@
 import { ProjectOverviewAnalytics } from "@/lib/definitions";
-import { pool } from "@/lib/db";
-import { RowDataPacket } from "mysql2";
+import { parseToPlainObject, db, QueryResult } from "@/lib/db";
 
 export async function GET() {
     try {
-        const queryRes = await pool
-            .query<RowDataPacket[][]>(
+        const queryRes = await db
+            .query<QueryResult[][]>(
                 `
                 SELECT COUNT(*) AS activeProjects
                 FROM Project_T
@@ -24,7 +23,7 @@ export async function GET() {
                 WHERE status = 'Overdue';
             `
             )
-            .then(([rows, _]) => rows);
+            .then((rows) => rows.map(parseToPlainObject));
 
         const res: ProjectOverviewAnalytics = {
             activeProjects: queryRes[0][0].activeProjects,
@@ -33,6 +32,7 @@ export async function GET() {
             projectsInOverdue: queryRes[3][0].projectsInOverdue,
         };
 
+        await db.end();
         return Response.json(res);
     } catch (error) {
         console.error(error);

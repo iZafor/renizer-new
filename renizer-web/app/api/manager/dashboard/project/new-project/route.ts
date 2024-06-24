@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { pool } from "@/lib/db";
+import { db } from "@/lib/db";
 import { v4 as uuid } from "uuid";
 import { NewProjectFormSchema } from "@/lib/schemas";
 import { Project } from "@/lib/definitions";
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     };
 
     try {
-        await pool.query(
+        await db.query(
             `INSERT INTO Project_T (project_id, name, description, org_restricted, m_p_user_id, creation_date)
             VALUES (?, ?, ?, ?, ?, ?)
             `,
@@ -45,6 +45,8 @@ export async function POST(req: NextRequest) {
                 newProject.creation_date,
             ]
         );
+
+        await db.end();
         return Response.json({ newProject });
     } catch (error) {
         console.error(error);

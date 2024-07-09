@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Project } from "@/lib/definitions";
 import { TableHeader } from "@/components/ui/table-header";
-import { StatusIcon } from "@/components/ui/icons";
+import { EnergySourceIcon, StatusIcon } from "@/components/ui/icons";
 import { formatEnergyUnit } from "@/lib/utils";
 import { format } from "date-fns";
 
@@ -38,6 +38,17 @@ export const columns: ColumnDef<Project>[] = [
         },
     },
     {
+        accessorKey: "source",
+        header: ({ column }) => <TableHeader column={column} title="Source" />,
+        cell: ({ row }) => (
+            <div className="w-[10rem] flex gap-1.5 items-center">
+                <EnergySourceIcon source={row.getValue("source")} />
+                <p>{row.getValue("source")}</p>
+            </div>
+        ),
+        enableGlobalFilter: false,
+    },
+    {
         accessorKey: "creation_date",
         header: ({ column }) => (
             <TableHeader column={column} title="Creation Date" />
@@ -53,7 +64,7 @@ export const columns: ColumnDef<Project>[] = [
         accessorKey: "status",
         header: ({ column }) => <TableHeader column={column} title="Status" />,
         cell: ({ row }) => (
-            <div className="w-[10rem] flex gap-1.5">
+            <div className="w-[10rem] flex gap-1.5 items-center">
                 <StatusIcon status={row.getValue("status")} />
                 <p className="truncate">{row.getValue("status")}</p>
             </div>

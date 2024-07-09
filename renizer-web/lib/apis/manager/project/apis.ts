@@ -16,12 +16,12 @@ export async function getProjectDetails(projectId: string) {
             .query<QueryResult[]>(
                 `
             SELECT 
-                a.project_id, name, description, location, start_date, end_date, status, energy_rate_kwh AS energy_rate, produced_energy_kwh AS energy_produced, energy_sold_kwh AS energy_sold, total_cost, org_restricted, m_p_user_id, creation_date, COALESCE(SUM(investment_amount), 0) AS investment_received
+                a.project_id, name, description, location, start_date, end_date, status, energy_rate_kwh AS energy_rate, produced_energy_wh AS energy_produced, energy_sold_wh AS energy_sold, total_cost, org_restricted, m_p_user_id, creation_date, SUM(IF(investment_date IS NOT NULL, investment_amount, 0)) AS investment_received
             FROM 
                 Project_T AS a
-                LEFT JOIN Investor_Invest_Project_T AS b ON a.project_id = b.project_id
+                LEFT JOIN Project_Investment_T AS b ON a.project_id = b.project_id
             WHERE 
-                a.project_id = '${projectId}'    
+                a.project_id = '${projectId}';
         `
             )
             .then(
@@ -38,6 +38,7 @@ export async function getProjectDetails(projectId: string) {
     }
 }
 
+// TODO: Filter collaborators based on organization
 export async function getCollaboratorsDetails(projectId: string) {
     try {
         const res = (await db
@@ -48,12 +49,12 @@ export async function getCollaboratorsDetails(projectId: string) {
             FROM 
                 Project_Contributor_T AS a
                 INNER JOIN User_T AS b ON a.c_p_user_id = b.user_id
-                INNER JOIN Project_Associate_T As c ON a.c_p_user_id = c.p_user_id
+                INNER JOIN Project_Associate_T AS c ON a.c_p_user_id = c.p_user_id
                 WHERE c_p_user_id NOT IN (
-                    SELECT DISTINCT(p_user_id)
+                    SELECT DISTINCT(c_p_user_id)
                     FROM Collaboration_T
                     WHERE project_id = '${projectId}'
-                )    
+                );
         `
             )
             .then(parseToPlainObject)) as CollaboratorDetails[];
@@ -71,29 +72,29 @@ export async function getProjectCollaborations(projectId: string) {
             .query<QueryResult[]>(
                 `
             SELECT 
-                a.p_user_id, CONCAT(first_name, ' ', last_name) AS name, a.project_id, start_date, end_date, role, COALESCE(COUNT(c.task_name), 0) AS total_assigned_tasks, tasks_in_progress, tasks_completed
+                a.c_p_user_id, CONCAT(first_name, ' ', last_name) AS name, a.project_id, start_date, end_date, role, COALESCE(COUNT(c.task_name), 0) AS total_assigned_tasks, tasks_in_progress, tasks_completed
             FROM 
                 Collaboration_T AS a 
-                INNER JOIN User_T AS b ON a.p_user_id = b.user_id
-                LEFT JOIN Collaboration_Task_T AS c ON a.p_user_id = c.p_user_id AND a.project_id = c.project_id
+                INNER JOIN User_T AS b ON a.c_p_user_id = b.user_id
+                LEFT JOIN Collaboration_Task_T AS c ON a.c_p_user_id = c.c_p_user_id AND a.project_id = c.project_id
                 LEFT JOIN (
-                    SELECT project_id, p_user_id, COALESCE(COUNT(task_name), 0) AS tasks_in_progress 
+                    SELECT project_id, c_p_user_id, COALESCE(COUNT(task_name), 0) AS tasks_in_progress 
                     FROM Collaboration_Task_T
                     WHERE status = "In Progress"
-                    GROUP BY p_user_id, project_id
-                ) AS dt1 ON a.p_user_id = dt1.p_user_id AND a.project_id = dt1.project_id 
+                    GROUP BY c_p_user_id, project_id
+                ) AS dt1 ON a.c_p_user_id = dt1.c_p_user_id AND a.project_id = dt1.project_id 
                 LEFT JOIN (
-                    SELECT project_id, p_user_id, COALESCE(COUNT(task_name), 0) AS tasks_completed 
+                    SELECT project_id, c_p_user_id, COALESCE(COUNT(task_name), 0) AS tasks_completed 
                     FROM Collaboration_Task_T
-                    WHERE status = "Done"
-                    GROUP BY p_user_id, project_id
-                ) AS dt2 ON a.p_user_id = dt2.p_user_id AND a.project_id = dt2.project_id
+                    WHERE status = "Completed"
+                    GROUP BY c_p_user_id, project_id
+                ) AS dt2 ON a.c_p_user_id = dt2.c_p_user_id AND a.project_id = dt2.project_id
             WHERE 
                 a.project_id = '${projectId}'
             GROUP BY
-                a.p_user_id, role, name, a.project_id, start_date, end_date, tasks_in_progress, tasks_completed
+                a.c_p_user_id, role, name, a.project_id, start_date, end_date, tasks_in_progress, tasks_completed
             ORDER BY
-                start_date DESC    
+                start_date DESC;
         `
             )
             .then(parseToPlainObject)) as ProjectCollaboration[];
@@ -115,11 +116,13 @@ export async function getInvestorsDetails() {
             FROM 
                 Investor_T AS a
                 INNER JOIN User_T AS b ON a.i_user_id = b.user_id
-                INNER JOIN Investor_Invest_Project_T AS c ON a.i_user_id = c.i_user_id
+                INNER JOIN Project_Investment_T AS c ON a.i_user_id = c.i_user_id
+            WHERE
+                c.investment_date IS NOT NULL
             GROUP BY
                 a.i_user_id, investor, investor_type
             ORDER BY 
-                total_investment DESC
+                total_investment DESC;
         `
             )
             .then(parseToPlainObject)) as InvestorDetails[];
@@ -137,15 +140,14 @@ export async function getProjectInvestments(projectId: string) {
             .query<QueryResult[]>(
                 `
             SELECT 
-                a.i_user_id, CONCAT(first_name, ' ', last_name) AS investor, a.project_id, a.investment_amount, proposal_date, investment_date, proposal_status
+                i_user_id, CONCAT(first_name, ' ', last_name) AS investor, project_id, investment_amount, proposal_date, investment_date, proposal_status
             FROM 
-                Investment_Proposal_T AS a
+                Project_Investment_T AS a
                 INNER JOIN User_T AS b ON a.i_user_id = b.user_id
-                LEFT JOIN Investor_Invest_Project_T AS c ON a.i_user_id = c.i_user_id AND a.project_id = c.project_id AND a.investment_amount = c.investment_amount
             WHERE
                 a.project_id = '${projectId}'
             ORDER BY
-                proposal_date DESC
+                investment_date DESC;
         `
             )
             .then(parseToPlainObject)) as ProjectInvestment[];
@@ -163,11 +165,11 @@ export async function getProjectTasks(projectId: string) {
             .query<QueryResult[]>(
                 `
             SELECT 
-                a.project_id, a.p_user_id, CONCAT(first_name, ' ', last_name) AS assignee, role, task_name AS task, status, assigned_date, expected_hour, expected_delivery_date, hour_taken, delivery_date, priority
+                a.project_id, a.c_p_user_id, CONCAT(first_name, ' ', last_name) AS assignee, role, task_name AS task, status, assigned_date, expected_hour, expected_delivery_date, hour_taken, delivery_date, priority
             FROM 
                 Collaboration_Task_T AS a 
-                INNER JOIN User_T AS b ON a.p_user_id = b.user_id
-                INNER JOIN Collaboration_T AS c ON a.p_user_id = c.p_user_id AND a.project_id = c.project_id
+                INNER JOIN User_T AS b ON a.c_p_user_id = b.user_id
+                INNER JOIN Collaboration_T AS c ON a.c_p_user_id = c.c_p_user_id AND a.project_id = c.project_id
             WHERE 
                 a.project_id = '${projectId}'
             `
@@ -193,6 +195,10 @@ export async function updateEnergyRate({
             SET energy_rate_kwh = ${newRate}
             WHERE project_id = '${projectId}'    
         `);
+    await db.query(`
+        INSERT INTO Project_Energy_Rate_Update_History_T (project_id, energy_rate_kwh, updated_on)
+        VALUES ('${projectId}', ${newRate}, ${new Date().toISOString()});
+    `);
 }
 
 export async function getMatchingRoles(project_id: string, role: string) {

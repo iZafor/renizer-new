@@ -22,7 +22,7 @@ export default function ProjectKeyIndicators({
     const projectDetailsQueryKey =
         useProjectDetailsQueryOptions(projectId).queryKey;
     const queryClient = useQueryClient();
-
+    console.log(project?.creation_date);
     return (
         <div className="grid grid-cols-2 gap-4">
             <KeyIndicatorContainer

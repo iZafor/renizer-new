@@ -11,7 +11,47 @@ import {
     CheckCircle,
     Building,
     User,
+    Wind,
+    Flame,
+    LeafyGreen,
+    Waves,
+    Sun,
+    Fuel,
+    PauseCircle,
 } from "lucide-react";
+
+export const energySources = [
+    {
+        value: "Wind",
+        label: "Wind",
+        icon: Wind,        
+    },
+    {
+        value: "Geothermal",
+        label: "Geothermal",
+        icon: Flame,        
+    },
+    {
+        value: "Biomass",
+        label: "Biomass",
+        icon: LeafyGreen,        
+    },
+    {
+        value: "Tidal",
+        label: "Tidal",
+        icon: Waves,        
+    },
+    {
+        value: "Solar",
+        label: "Solar",
+        icon: Sun,        
+    },
+    {
+        value: "Hydrogen",
+        label: "Hydrogen",
+        icon: Fuel,        
+    },
+]
 
 export const statuses = [
     {
@@ -20,8 +60,8 @@ export const statuses = [
         icon: Timer,
     },
     {
-        value: "Done",
-        label: "Done",
+        value: "Completed",
+        label: "Completed",
         icon: CircleCheck,
     },
     {
@@ -38,6 +78,11 @@ export const statuses = [
         value: "Overdue",
         label: "Overdue",
         icon: AlertCircle,
+    },
+    {
+        value: "On Hold",
+        label: "On Hold",
+        icon: PauseCircle,
     },
 ];
 

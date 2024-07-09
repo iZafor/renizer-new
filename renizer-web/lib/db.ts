@@ -6,7 +6,7 @@ export const db = mysql({
         user: "root",
         password: process.env.REnizer_DB_USER_PASSWORD,
         port: Number(process.env.REnizer_DB_PORT),
-        database: "REnizer_next",
+        database: "REnizer_new",
         multipleStatements: true,
     },
     backoff: "decorrelated",

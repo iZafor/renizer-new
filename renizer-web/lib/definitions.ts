@@ -2,6 +2,7 @@ export interface Project {
     project_id: string;
     name: string;
     description?: string;
+    source: string;
     status: string;
     energy_produced: number;
     energy_sold: number;
@@ -53,7 +54,7 @@ export interface ProjectInvestment {
 }
 
 export interface ProjectCollaboration {
-    p_user_id: string;
+    c_p_user_id: string;
     name: string;
     project_id: string;
     start_date?: Date;
@@ -66,7 +67,7 @@ export interface ProjectCollaboration {
 
 export interface ProjectTask {
     project_id: string;
-    p_user_id: string;
+    c_p_user_id: string;
     assignee: string;
     role: string;
     task: string;

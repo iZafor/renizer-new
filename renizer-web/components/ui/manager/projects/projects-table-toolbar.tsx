@@ -6,9 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TableColumnViewOptions } from "@/components/ui/table-column-view-options";
 import { TableFacetedFilter } from "@/components/ui/table-faceted-filter";
-import { statuses } from "@/lib/data";
+import { energySources, statuses } from "@/lib/data";
 import NewProjectDialog from "./new-project-dialog";
-import { Project } from "@/lib/definitions";
 
 interface ProjectTableToolbarProps<TData> {
     table: Table<TData>;
@@ -34,6 +33,13 @@ export default function ProjectTableToolbar<TData>({
                         column={table.getColumn("status")}
                         title="Status"
                         options={statuses}
+                    />
+                )}
+                {table.getColumn("source") && (
+                    <TableFacetedFilter
+                        column={table.getColumn("source")}
+                        title="Source"
+                        options={energySources}
                     />
                 )}
                 {isFiltered && (

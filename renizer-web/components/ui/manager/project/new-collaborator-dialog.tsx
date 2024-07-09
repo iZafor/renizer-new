@@ -73,7 +73,7 @@ export default function NewCollaboratorDialog() {
                         old.filter(
                             (col) =>
                                 col.c_p_user_id !==
-                                data.newCollaboration?.p_user_id
+                                data.newCollaboration?.c_p_user_id
                         )
                 );
 
@@ -140,7 +140,7 @@ export default function NewCollaboratorDialog() {
                                     className="w-[50rem]"
                                 >
                                     <DataTable
-                                        className="max-h-[20rem]"
+                                        className="max-h-[16rem]"
                                         columns={columns}
                                         data={collaborators!}
                                         toolbar={CollaboratorsTableToolbar}

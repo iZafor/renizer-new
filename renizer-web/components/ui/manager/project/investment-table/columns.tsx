@@ -34,6 +34,7 @@ export const columns: ColumnDef<ProjectInvestment>[] = [
         header: ({ column }) => (
             <TableHeader column={column} title="Investment Amount" />
         ),
+        cell: ({row}) => <div>${row.getValue("investment_amount")}</div>,
         enableGlobalFilter: false,
     },
     {

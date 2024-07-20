@@ -3,7 +3,7 @@
 import ReactApexChart from "react-apexcharts";
 import { useTheme } from "next-themes";
 import { ApexOptions } from "apexcharts";
-import { TaskStatusAnalytics } from "@/lib/definitions";
+import { ProjectTaskStatus } from "@/lib/definitions";
 import { useEffect, useState } from "react";
 
 const statusColors = [
@@ -46,7 +46,7 @@ export default function TaskStatusChart() {
 
     useEffect(() => {
         async function fetchData() {
-            const res: TaskStatusAnalytics = await fetch(
+            const res: ProjectTaskStatus = await fetch(
                 `/api/manager/dashboard/analytics/task-status`
             ).then((res) => res.json());
             const newCategories = Object.keys(res);

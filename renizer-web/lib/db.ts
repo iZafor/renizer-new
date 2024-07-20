@@ -4,9 +4,9 @@ export const db = mysql({
     config: {
         host: process.env.REnizer_DB_HOST,
         user: "root",
-        password: process.env.REnizer_DB_USER_PASSWORD,
-        port: Number(process.env.REnizer_DB_PORT),
-        database: "REnizer_new",
+        password: "",
+        port: 3307,
+        database: "renizer",
         multipleStatements: true,
     },
     backoff: "decorrelated",

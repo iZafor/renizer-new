@@ -32,6 +32,22 @@ export function formatEnergyUnit(amount: number) {
     return `${(amount / 1000000000).toFixed(4)} GWh`;
 }
 
+export function formatNumber(val: number) {
+    if (typeof val !== "number" || Number.isNaN(val)) {
+        return "0";
+    }
+    if (val < 1000) {
+        return `${val}`
+    }
+    if (val < 1000000) {
+        return `${(val / 1000).toFixed(2)}K`
+    }
+    if (val < 1000000000) {
+        return `${(val / 1000000).toFixed(2)}M`;
+    }
+    return `${(val / 1000000000).toFixed(2)}B`;
+}
+
 export function getInitial(name: string) {
     if (typeof name !== "string" || !name) {
         return "";

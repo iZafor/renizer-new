@@ -80,23 +80,47 @@ export interface ProjectTask {
     priority: string;
 }
 
-export interface ProjectOverviewAnalytics {
+export interface ProjectsOverviewData {
     activeProjects: number;
     completedProjects: number;
     projectsInProgress: number;
     projectsInOverdue: number;
 }
 
-export interface TaskStatusAnalytics {
+export interface ProjectTaskStatus {
     // Project Name
     [key: string]: {
         [key: string]: number; // Status: Status Count
     };
 }
 
-export interface TaskPerformanceAnalytics {
+export interface ProjectTaskPerformance {
     // Project Name
     [key: string]: {
         [key: string]: number; // Metric: Count
     };
+}
+
+export interface ProjectsBasedOnEnergySource {
+    energy_source: string;
+    count: number;
+}
+
+export interface ProducedEnergyBasedOnEnergySource {
+    energy_source: string;
+    produced_wh: number;
+}
+
+export interface InvestmentBasedOnEnergySource {
+    energy_source: string;
+    investment_received: number;
+}
+
+export interface ProducedEnergyPerYearBasedOnEnergySource {
+    data: {
+        [key: string]: {
+            [key: number]: number;
+        };
+    };
+    years: number[];
 }

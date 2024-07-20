@@ -25,6 +25,8 @@ interface ComboBoxProps {
     inputPlaceholder: string;
     className?: string;
     onStateUpdate?: (state: string) => void;
+    containerClassName?: string;
+    containerAlignment?: "end" | "center" | "start";
 }
 
 export default function ComboBox({
@@ -36,6 +38,8 @@ export default function ComboBox({
     inputPlaceholder,
     className,
     onStateUpdate,
+    containerClassName,
+    containerAlignment = "start",
 }: ComboBoxProps) {
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(defaultValue || "");
@@ -60,7 +64,10 @@ export default function ComboBox({
                     )}
                 </div>
             </PopoverTrigger>
-            <PopoverContent align="start">
+            <PopoverContent
+                align={containerAlignment}
+                className={containerClassName}
+            >
                 <Command>
                     <CommandInput placeholder={inputPlaceholder} />
                     <CommandList>

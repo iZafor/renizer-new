@@ -8,6 +8,7 @@ export const db = mysql({
         port: 3307,
         database: "renizer",
         multipleStatements: true,
+        timeout: 5000,
     },
     backoff: "decorrelated",
     zombieMaxTimeout: 20,

@@ -21,9 +21,6 @@ import {
     DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { ProjectTask } from "@/lib/definitions";
-import { cn, getInitial } from "@/lib/utils";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { User } from "lucide-react";
 import { format } from "date-fns";
 import { useProjectTasksQueryOptions } from "@/lib/hooks/manager/use-project-query";
 import { TaskPrimaryKey } from "./types";
@@ -31,6 +28,7 @@ import InfoContainer from "./info-container";
 import ExpectedDeliveryDateContainer from "./expected-delivery-date-container";
 import TaskStatusContainer from "./task-status-container";
 import TaskPriorityContainer from "./task-priority-container";
+import TaskAssigneeContainer from "./task-assignee-container";
 import { useEffect, useState } from "react";
 import { UpdateIcon } from "@radix-ui/react-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -49,7 +47,7 @@ export default function TaskDetails({ className, task }: TaskDetailsProps) {
         task.project_id
     ).queryKey;
     const taskPrimaryKey: TaskPrimaryKey = {
-        pUserId: task.p_user_id,
+        cpUserId: task.c_p_user_id,
         projectId: task.project_id,
         taskName: task.task,
         assignedDate: task.assigned_date,
@@ -76,7 +74,8 @@ export default function TaskDetails({ className, task }: TaskDetailsProps) {
                         old
                             ? old.filter(
                                   (t) =>
-                                      t.p_user_id !== taskPrimaryKey.pUserId &&
+                                      t.c_p_user_id !==
+                                          taskPrimaryKey.cpUserId &&
                                       t.task !== taskPrimaryKey.taskName &&
                                       t.assigned_date !==
                                           taskPrimaryKey.assignedDate
@@ -92,7 +91,7 @@ export default function TaskDetails({ className, task }: TaskDetailsProps) {
                 });
             }
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [taskDeletionState]);
 
     return (
@@ -109,7 +108,7 @@ export default function TaskDetails({ className, task }: TaskDetailsProps) {
                         onClick={() => setUpdateOpen(true)}
                     >
                         <UpdateIcon className="size-4" />
-                        <p className="text-destructive-foreground">Update</p>
+                        <p>Update</p>
                     </DropdownMenuItem>
                     <DropdownMenuItem
                         className="flex items-center gap-2"
@@ -128,7 +127,7 @@ export default function TaskDetails({ className, task }: TaskDetailsProps) {
                     <div className="grid place-items-center h-full">
                         <div>
                             <SheetHeader>
-                                <SheetTitle>
+                                <SheetTitle asChild>
                                     <h2
                                         autoFocus
                                         className="text-3xl border-0 pl-0 focus-visible:outline-none bg-transparent"
@@ -138,27 +137,13 @@ export default function TaskDetails({ className, task }: TaskDetailsProps) {
                                 </SheetTitle>
                             </SheetHeader>
                             <div className="flex flex-col gap-8 mt-6">
-                                <InfoContainer
-                                    IdentifierIcon={User}
-                                    identifierText="Assignee"
-                                >
-                                    <div className="flex items-center space-x-1.5">
-                                        <Avatar>
-                                            <AvatarImage src="" />
-                                            <AvatarFallback>
-                                                {getInitial(task.assignee)}
-                                            </AvatarFallback>
-                                        </Avatar>
-                                        <div className="flex flex-col font-semibold">
-                                            <p className="text-lg">
-                                                {task.assignee}
-                                            </p>
-                                            <p className="text-muted-foreground text-xs">
-                                                {task.role}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </InfoContainer>
+                                <TaskAssigneeContainer
+                                    projectTasksQueryKey={projectTasksQueryKey}
+                                    taskPrimaryKey={taskPrimaryKey}
+                                    assignee={task.assignee}
+                                    role={task.role}
+                                    deliveryDate={task.delivery_date}
+                                />
                                 <InfoContainer
                                     IdentifierIcon={CalendarPlus}
                                     identifierText="Assigned Date"
@@ -183,6 +168,7 @@ export default function TaskDetails({ className, task }: TaskDetailsProps) {
                                     expectedDeliveryDate={
                                         task.expected_delivery_date
                                     }
+                                    deliveryDate={task.delivery_date}
                                 />
                                 <InfoContainer
                                     IdentifierIcon={Hourglass}

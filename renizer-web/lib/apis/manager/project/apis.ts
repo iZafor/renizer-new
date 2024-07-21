@@ -50,7 +50,7 @@ export async function getCollaboratorsDetails(projectId: string) {
                 Project_Contributor_T AS a
                 INNER JOIN User_T AS b ON a.c_p_user_id = b.user_id
                 INNER JOIN Project_Associate_T AS c ON a.c_p_user_id = c.p_user_id
-                WHERE c_p_user_id NOT IN (
+                WHERE c_p_user_id IN (
                     SELECT DISTINCT(c_p_user_id)
                     FROM Collaboration_T
                     WHERE project_id = '${projectId}'

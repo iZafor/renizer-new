@@ -1,6 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
 import { format } from "date-fns";
 import { CalendarClock, CalendarIcon } from "lucide-react";
 import InfoContainer from "./info-container";
@@ -15,12 +19,15 @@ interface ExpectedDeliveryDateContainerProps {
     projectTasksQueryKey: string[];
     taskPrimaryKey: TaskPrimaryKey;
     expectedDeliveryDate: Date;
+    deliveryDate?: Date;
 }
 
+// TODO: handle the case when expected delivery date is before the assigned date
 export default function ExpectedDeliveryDateContainer({
     projectTasksQueryKey,
     taskPrimaryKey,
     expectedDeliveryDate,
+    deliveryDate,
 }: ExpectedDeliveryDateContainerProps) {
     const queryClient = useQueryClient();
     const [
@@ -46,7 +53,7 @@ export default function ExpectedDeliveryDateContainer({
                     (old: ProjectTask[]) =>
                         old
                             ? old.map((t) =>
-                                  t.p_user_id === taskPrimaryKey.pUserId &&
+                                  t.c_p_user_id === taskPrimaryKey.cpUserId &&
                                   t.assigned_date ===
                                       taskPrimaryKey.assignedDate &&
                                   t.task === taskPrimaryKey.taskName
@@ -103,33 +110,39 @@ export default function ExpectedDeliveryDateContainer({
             IdentifierIcon={CalendarClock}
             identifierText="Expected Delivery Date"
         >
-            <Popover>
-                <PopoverTrigger asChild>
-                    <Button
-                        variant="outline"
-                        className="w-[10rem] pl-3 text-left font-semibold"
-                    >
-                        {format(expectedDeliveryDate, "PP")}
-                        <CalendarIcon className="ml-auto size-4 opacity-50" />
-                    </Button>
-                </PopoverTrigger>
-                <PopoverContent>
-                    <Calendar
-                        mode="single"
-                        selected={expectedDeliveryDate}
-                        disabled={(date) =>
-                            date < taskPrimaryKey.assignedDate ||
-                            expectedDeliveryDateMutation.isPending
-                        }
-                        today={expectedDeliveryDate}
-                        onSelect={(newDate) => {
-                            setTimeout(() => {
-                                expectedDeliveryDateMutation.mutate(newDate!);
-                            }, 200);
-                        }}
-                    />
-                </PopoverContent>
-            </Popover>
+            {deliveryDate ? (
+                <p className="font-semibold">{format(expectedDeliveryDate, "PP")}</p>
+            ) : (
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button
+                            variant="outline"
+                            className="w-[10rem] pl-3 text-left font-semibold"
+                        >
+                            {format(expectedDeliveryDate, "PP")}
+                            <CalendarIcon className="ml-auto size-4 opacity-50" />
+                        </Button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                        <Calendar
+                            mode="single"
+                            selected={expectedDeliveryDate}
+                            disabled={(date) =>
+                                date < taskPrimaryKey.assignedDate ||
+                                expectedDeliveryDateMutation.isPending
+                            }
+                            today={expectedDeliveryDate}
+                            onSelect={(newDate) => {
+                                setTimeout(() => {
+                                    expectedDeliveryDateMutation.mutate(
+                                        newDate!
+                                    );
+                                }, 200);
+                            }}
+                        />
+                    </PopoverContent>
+                </Popover>
+            )}
         </InfoContainer>
     );
 }

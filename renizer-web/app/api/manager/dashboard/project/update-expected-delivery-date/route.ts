@@ -6,7 +6,7 @@ export async function PATCH(req: NextRequest) {
     const body = await req.json();
     const validatedData =
         await NewExpectedDeliveryDateFormSchema.safeParseAsync({
-            pUserId: body.pUserId,
+            cpUserId: body.cpUserId,
             projectId: body.projectId,
             taskName: body.taskName,
             assignedDate: new Date(body.assignedDate),
@@ -19,26 +19,37 @@ export async function PATCH(req: NextRequest) {
         });
     }
 
+    const {
+        projectId,
+        cpUserId,
+        assignedDate,
+        taskName,
+        newExpectedDeliveryDate,
+    } = validatedData.data;
     try {
         await db.query(
             `
-            UPDATE
-            Collaboration_Task_T
+            UPDATE Collaboration_Task_T
             SET expected_delivery_date = ?     
-            WHERE project_id = ? AND p_user_id = ? AND assigned_date = ? AND task_name = ?
+            WHERE project_id = ? AND c_p_user_id = ? AND assigned_date = ? AND task_name = ?;
+
+            INSERT INTO Collaboration_Task_Expected_Delivery_Date_Update_History_T VALUES (?, ?, ?, ?, ?);
         `,
             [
-                validatedData.data.newExpectedDeliveryDate,
-                validatedData.data.projectId,
-                validatedData.data.pUserId,
-                validatedData.data.assignedDate,
-                validatedData.data.taskName,
+                newExpectedDeliveryDate,
+                projectId,
+                cpUserId,
+                assignedDate,
+                taskName,
+                cpUserId,
+                projectId,
+                taskName,
+                new Date(),
+                newExpectedDeliveryDate,
             ]
         );
         await db.end();
-        return Response.json({
-            newExpectedDeliveryDate: validatedData.data.newExpectedDeliveryDate,
-        });
+        return Response.json({ newExpectedDeliveryDate });
     } catch (error) {
         console.error(error);
         return Response.json({ message: "Unexpected error occurred." });

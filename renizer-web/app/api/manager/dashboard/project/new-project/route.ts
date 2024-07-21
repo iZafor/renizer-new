@@ -4,6 +4,7 @@ import { v4 as uuid } from "uuid";
 import { NewProjectFormSchema } from "@/lib/schemas";
 import { Project } from "@/lib/definitions";
 
+// TODO: update the energy_source
 export async function POST(req: NextRequest) {
     const formData = await req.formData();
     const validatedData = await NewProjectFormSchema.safeParseAsync({
@@ -24,6 +25,7 @@ export async function POST(req: NextRequest) {
     const newProject: Project = {
         project_id: uuid(),
         name: data.name,
+        source: "Wind",
         description: data.description!,
         status: "Not Started Yet",
         energy_sold: 0,
@@ -33,12 +35,13 @@ export async function POST(req: NextRequest) {
 
     try {
         await db.query(
-            `INSERT INTO Project_T (project_id, name, description, org_restricted, m_p_user_id, creation_date)
+            `INSERT INTO Project_T (project_id, name, energy_source, description, org_restricted, m_p_user_id, creation_date)
             VALUES (?, ?, ?, ?, ?, ?)
             `,
             [
                 newProject.project_id,
                 newProject.name,
+                newProject.source,
                 newProject.description,
                 data.restrictedToOrganization,
                 data.managerId,

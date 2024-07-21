@@ -1,5 +1,5 @@
 export type TaskPrimaryKey = {
-    pUserId: string;
+    cpUserId: string;
     projectId: string;
     taskName: string;
     assignedDate: Date;

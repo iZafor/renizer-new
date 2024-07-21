@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 export async function PATCH(req: NextRequest) {
     const body = await req.json();
     const validatedData = await NewTaskPriorityFormSchema.safeParseAsync({
-        pUserId: body.pUserId,
+        cpUserId: body.cpUserId,
         projectId: body.projectId,
         taskName: body.taskName,
         assignedDate: new Date(body.assignedDate),
@@ -18,26 +18,33 @@ export async function PATCH(req: NextRequest) {
         });
     }
 
+    const { projectId, cpUserId, assignedDate, taskName, newPriority } =
+        validatedData.data;
     try {
         await db.query(
             `
             UPDATE
             Collaboration_Task_T
             SET priority = ?     
-            WHERE project_id = ? AND p_user_id = ? AND assigned_date = ? AND task_name = ?
+            WHERE project_id = ? AND c_p_user_id = ? AND assigned_date = ? AND task_name = ?;
+
+            INSERT INTO Collaboration_Task_Priority_Update_History_T VALUES (?, ?, ?, ?, ?);
         `,
             [
-                validatedData.data.newPriority,
-                validatedData.data.projectId,
-                validatedData.data.pUserId,
-                validatedData.data.assignedDate,
-                validatedData.data.taskName,
+                newPriority,
+                projectId,
+                cpUserId,
+                assignedDate,
+                taskName,
+                cpUserId,
+                projectId,
+                taskName,
+                new Date(),
+                newPriority,
             ]
         );
         await db.end();
-        return Response.json({
-            newPriority: validatedData.data.newPriority,
-        });
+        return Response.json({ newPriority });
     } catch (error) {
         console.error(error);
         return Response.json({ message: "Unexpected error occurred." });

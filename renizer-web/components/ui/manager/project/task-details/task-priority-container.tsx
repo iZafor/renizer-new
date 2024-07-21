@@ -45,7 +45,7 @@ export default function TaskPriorityContainer({
                     (old: ProjectTask[]) =>
                         old
                             ? old.map((t) =>
-                                  t.p_user_id === taskPrimaryKey.pUserId &&
+                                  t.c_p_user_id === taskPrimaryKey.cpUserId &&
                                   t.assigned_date ===
                                       taskPrimaryKey.assignedDate &&
                                   t.task === taskPrimaryKey.taskName

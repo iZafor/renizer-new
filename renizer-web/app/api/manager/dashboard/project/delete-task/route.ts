@@ -8,10 +8,10 @@ export async function DELETE(req: NextRequest) {
             `
             DELETE FROM
             Collaboration_Task_T
-            WHERE p_user_id = ? AND project_id = ? AND task_name = ? AND assigned_date = ?    
+            WHERE c_p_user_id = ? AND project_id = ? AND task_name = ? AND assigned_date = ?    
         `,
             [
-                body.pUserId,
+                body.cpUserId,
                 body.projectId,
                 body.taskName,
                 new Date(body.assignedDate),

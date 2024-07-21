@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 export async function PATCH(req: NextRequest) {
     const body = await req.json();
     const validatedData = await NewTaskStatusFormSchema.safeParseAsync({
-        pUserId: body.pUserId,
+        cpUserId: body.cpUserId,
         projectId: body.projectId,
         taskName: body.taskName,
         assignedDate: new Date(body.assignedDate),
@@ -18,26 +18,35 @@ export async function PATCH(req: NextRequest) {
         });
     }
 
+    const { projectId, cpUserId, assignedDate, taskName, newStatus } =
+        validatedData.data;
+    const updatedOn = new Date();
+    const deliveryDate = newStatus === "Completed" ? updatedOn : null;
     try {
         await db.query(
             `
-            UPDATE
-            Collaboration_Task_T
-            SET status = ?     
-            WHERE project_id = ? AND p_user_id = ? AND assigned_date = ? AND task_name = ?
+            UPDATE Collaboration_Task_T
+            SET status = ?, delivery_date = ?
+            WHERE project_id = ? AND c_p_user_id = ? AND assigned_date = ? AND task_name = ?;
+
+            INSERT INTO Collaboration_Task_Status_Update_History_T VALUES (?, ?, ?, ?, ?);
         `,
             [
-                validatedData.data.newStatus,
-                validatedData.data.projectId,
-                validatedData.data.pUserId,
-                validatedData.data.assignedDate,
-                validatedData.data.taskName,
+                newStatus,
+                deliveryDate,
+                projectId,
+                cpUserId,
+                assignedDate,
+                taskName,
+                cpUserId,
+                projectId,
+                taskName,
+                updatedOn,
+                newStatus,
             ]
         );
         await db.end();
-        return Response.json({
-            newStatus: validatedData.data.newStatus,
-        });
+        return Response.json({ newStatus, deliveryDate });
     } catch (error) {
         console.error(error);
         return Response.json({ message: "Unexpected error occurred." });

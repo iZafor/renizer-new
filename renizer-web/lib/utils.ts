@@ -40,12 +40,12 @@ export function formatNumber(val: number) {
         return `${val}`
     }
     if (val < 1000000) {
-        return `${(val / 1000).toFixed(2)}K`
+        return `${(val / 1000).toFixed(2)} K`
     }
     if (val < 1000000000) {
-        return `${(val / 1000000).toFixed(2)}M`;
+        return `${(val / 1000000).toFixed(2)} M`;
     }
-    return `${(val / 1000000000).toFixed(2)}B`;
+    return `${(val / 1000000000).toFixed(2)} B`;
 }
 
 export function getInitial(name: string) {

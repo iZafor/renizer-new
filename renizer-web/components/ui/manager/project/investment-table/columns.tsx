@@ -2,7 +2,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { ProjectInvestment } from "@/lib/definitions";
 import { TableHeader } from "@/components/ui/table-header";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { getInitial } from "@/lib/utils";
+import { getInitial, formatNumber } from "@/lib/utils";
 import { StatusIcon } from "@/components/ui/icons";
 import { format } from "date-fns";
 
@@ -34,7 +34,9 @@ export const columns: ColumnDef<ProjectInvestment>[] = [
         header: ({ column }) => (
             <TableHeader column={column} title="Investment Amount" />
         ),
-        cell: ({row}) => <div>${row.getValue("investment_amount")}</div>,
+        cell: ({ row }) => (
+            <div>${formatNumber(row.getValue("investment_amount"))}</div>
+        ),
         enableGlobalFilter: false,
     },
     {

@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
 
         const newCollaboration: ProjectCollaboration = {
             name: res[1][0].name,
-            p_user_id: validatedData.data.contributor,
+            c_p_user_id: validatedData.data.contributor,
             project_id: validatedData.data.projectId,
             start_date: new Date(),
             role: validatedData.data.role,
@@ -57,11 +57,11 @@ export async function POST(req: NextRequest) {
         };
         await db.query(
             `
-            INSERT INTO Collaboration_T (p_user_id, project_id, start_date, role)
+            INSERT INTO Collaboration_T (c_p_user_id, project_id, start_date, role)
             VALUES(?, ?, ?, ?)
             `,
             [
-                newCollaboration.p_user_id,
+                newCollaboration.c_p_user_id,
                 newCollaboration.project_id,
                 newCollaboration.start_date,
                 newCollaboration.role,

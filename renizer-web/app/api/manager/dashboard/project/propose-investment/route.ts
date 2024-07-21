@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
         };
         await db.query(
             `
-            INSERT INTO Investment_Proposal_T (i_user_id, project_id, investment_amount, proposal_date)
+            INSERT INTO Project_Investment_T (i_user_id, project_id, investment_amount, proposal_date)
             VALUES(?, ?, ?, ?)
             `,
             [

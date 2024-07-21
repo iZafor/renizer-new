@@ -82,6 +82,7 @@ export default function EnergyProductionPerYearBasedOnEnergySource() {
             newSeries.push(currSeries);
         }
         setSeries(newSeries);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [unit]);
 
     return (

@@ -108,7 +108,7 @@ export const NewCollaboratorFormSchema = z.object({
 export type NewExpectedDeliveryDateFormState =
     | {
           errors?: {
-              pUserId?: string[];
+              cpUserId?: string[];
               projectId?: string[];
               taskName?: string;
               assignedDate?: string[];
@@ -121,7 +121,7 @@ export type NewExpectedDeliveryDateFormState =
 
 export const NewExpectedDeliveryDateFormSchema = z.object({
     projectId: z.string().uuid({ message: "Invalid form data." }),
-    pUserId: z.string().uuid({ message: "Invalid form data." }),
+    cpUserId: z.string().uuid({ message: "Invalid form data." }),
     assignedDate: z.date({ message: "Invalid form data." }),
     taskName: z.string().min(1, { message: "Invalid form data." }),
     newExpectedDeliveryDate: z.date({ message: "Invalid date format." }),
@@ -130,7 +130,7 @@ export const NewExpectedDeliveryDateFormSchema = z.object({
 export type NewTaskStatusFormState =
     | {
           errors?: {
-              pUserId?: string[];
+              cpUserId?: string[];
               projectId?: string[];
               taskName?: string;
               assignedDate?: string[];
@@ -138,23 +138,34 @@ export type NewTaskStatusFormState =
           };
           message?: string[];
           newStatus?: string;
+          deliveryDate?: string;
       }
     | undefined;
 
 export const NewTaskStatusFormSchema = z.object({
     projectId: z.string().uuid({ message: "Invalid form data." }),
-    pUserId: z.string().uuid({ message: "Invalid form data." }),
+    cpUserId: z.string().uuid({ message: "Invalid form data." }),
     assignedDate: z.date({ message: "Invalid form data." }),
     taskName: z.string().min(1, { message: "Invalid form data." }),
-    newStatus: z.enum(["In Progress", "Done", "Cancelled"], {
-        message: "Invalid status.",
-    }),
+    newStatus: z.enum(
+        [
+            "In Progress",
+            "Completed",
+            "Cancelled",
+            "Not Started Yet",
+            "Overdue",
+            "On Hold",
+        ],
+        {
+            message: "Invalid status.",
+        }
+    ),
 });
 
 export type NewTaskPriorityFormState =
     | {
           errors?: {
-              pUserId?: string[];
+              cpUserId?: string[];
               projectId?: string[];
               taskName?: string;
               assignedDate?: string[];
@@ -167,10 +178,35 @@ export type NewTaskPriorityFormState =
 
 export const NewTaskPriorityFormSchema = z.object({
     projectId: z.string().uuid({ message: "Invalid form data." }),
-    pUserId: z.string().uuid({ message: "Invalid form data." }),
+    cpUserId: z.string().uuid({ message: "Invalid form data." }),
     assignedDate: z.date({ message: "Invalid form data." }),
     taskName: z.string().min(1, { message: "Invalid form data." }),
     newPriority: z.enum(["High", "Medium", "Low"], {
         message: "Invalid priority.",
     }),
+});
+
+export type NewTaskAssigneeFormState =
+    | {
+          errors?: {
+              cpUserId?: string[];
+              projectId?: string[];
+              taskName?: string[];
+              assignedDate?: string[];
+              newAssigneeId?: string[];
+          };
+          message?: string[];
+          newAssigneeId?: string;
+          newAssigneeName?: string;
+          newAssigneeRole?: string;
+          newAssignedDate?: string;
+      }
+    | undefined;
+
+export const NewTaskAssigneeFormSchema = z.object({
+    projectId: z.string().uuid({ message: "Invalid form data." }),
+    cpUserId: z.string().uuid({ message: "Invalid form data." }),
+    assignedDate: z.date({ message: "Invalid form data." }),
+    taskName: z.string().min(1, { message: "Invalid form data." }),
+    newAssigneeId: z.string().uuid({ message: "Invalid assignee." }),
 });

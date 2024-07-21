@@ -45,13 +45,14 @@ export default function TaskStatusContainer({
                     (old: ProjectTask[]) =>
                         old
                             ? old.map((t) =>
-                                  t.p_user_id === taskPrimaryKey.pUserId &&
+                                  t.c_p_user_id === taskPrimaryKey.cpUserId &&
                                   t.assigned_date ===
                                       taskPrimaryKey.assignedDate &&
                                   t.task === taskPrimaryKey.taskName
                                       ? {
                                             ...t,
                                             status: data.newStatus,
+                                            delivery_date: data.deliveryDate,
                                         }
                                       : t
                               )
@@ -98,8 +99,13 @@ export default function TaskStatusContainer({
                 </SelectTrigger>
                 <SelectContent>
                     <SelectItem value="In Progress">In Progress</SelectItem>
-                    <SelectItem value="Done">Done</SelectItem>
+                    <SelectItem value="Completed">Completed</SelectItem>
                     <SelectItem value="Cancelled">Cancelled</SelectItem>
+                    <SelectItem value="Not Started Yet">
+                        Not Started Yet
+                    </SelectItem>
+                    <SelectItem value="Overdue">Overdue</SelectItem>
+                    <SelectItem value="On Hold">On Hold</SelectItem>
                 </SelectContent>
             </Select>
         </InfoContainer>

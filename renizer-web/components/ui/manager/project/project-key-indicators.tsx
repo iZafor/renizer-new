@@ -1,5 +1,5 @@
 import { Project, ProjectDetails } from "@/lib/definitions";
-import { formatEnergyUnit } from "@/lib/utils";
+import { formatEnergyUnit, formatNumber } from "@/lib/utils";
 import { format } from "date-fns";
 import {
     KeyIndicatorContainer,
@@ -22,7 +22,7 @@ export default function ProjectKeyIndicators({
     const projectDetailsQueryKey =
         useProjectDetailsQueryOptions(projectId).queryKey;
     const queryClient = useQueryClient();
-    console.log(project?.creation_date);
+
     return (
         <div className="grid grid-cols-2 gap-4">
             <KeyIndicatorContainer
@@ -39,7 +39,7 @@ export default function ProjectKeyIndicators({
             />
             <KeyIndicatorContainer
                 title="Investment Received"
-                data={`$${project?.investment_received}`}
+                data={`$${formatNumber(project?.investment_received!)}`}
             />
             <EditableKeyIndicatorContainer
                 title="Current Energy Rate"

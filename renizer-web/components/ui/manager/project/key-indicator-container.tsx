@@ -118,7 +118,7 @@ export function EditableKeyIndicatorContainer<TVariables = FormData>({
                     </DialogContent>
                 </Dialog>
             </div>
-            <p>{formatter(data)}</p>
+            <p className="font-semibold">{formatter(data)}</p>
         </div>
     );
 }

@@ -2,7 +2,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { InvestorDetails } from "@/lib/definitions";
 import { TableHeader } from "@/components/ui/table-header";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { getInitial } from "@/lib/utils";
+import { getInitial, formatNumber } from "@/lib/utils";
 
 export const columns: ColumnDef<InvestorDetails>[] = [
     {
@@ -46,7 +46,9 @@ export const columns: ColumnDef<InvestorDetails>[] = [
         header: ({ column }) => (
             <TableHeader column={column} title="Total Investment" />
         ),
-        cell: ({ row }) => <div>${row.getValue("total_investment")}</div>,
+        cell: ({ row }) => (
+            <div>${formatNumber(row.getValue("total_investment"))}</div>
+        ),
         enableGlobalFilter: false,
     },
 ];

@@ -11,7 +11,13 @@ import { useQuery } from "@tanstack/react-query";
 import { useProducedEnergyPerYearBasedOnEnergySourceQueryOptions } from "@/lib/hooks/manager/use-analytics-query";
 import { useTheme } from "next-themes";
 import { ProducedEnergyPerYearBasedOnEnergySource as DType } from "@/lib/definitions";
-import ComboBox from "@/components/ui/combo-box";
+import {
+    Select,
+    SelectTrigger,
+    SelectValue,
+    SelectContent,
+    SelectItem,
+} from "@/components/ui/select";
 
 const unitMap: { [key: string]: number } = {
     Wh: 1,
@@ -82,7 +88,7 @@ export default function EnergyProductionPerYearBasedOnEnergySource() {
             newSeries.push(currSeries);
         }
         setSeries(newSeries);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [unit]);
 
     return (
@@ -91,16 +97,18 @@ export default function EnergyProductionPerYearBasedOnEnergySource() {
                 Energy Production Per Year Based on Different Energy Sources
             </h2>
             <Card className="h-[32rem] relative">
-                <ComboBox
-                    className="absolute right-2 top-2 z-50"
-                    values={Object.keys(unitMap)}
-                    triggerButtonText="Unit"
-                    inputPlaceholder="Unit"
-                    containerAlignment="end"
-                    containerClassName="w-[10rem]"
-                    defaultValue={defaultUnit}
-                    onStateUpdate={(newUnit) => setUnit(newUnit)}
-                />
+                <Select value={unit} onValueChange={setUnit}>
+                    <SelectTrigger className="font-semibold w-[6rem] absolute right-2 top-2 z-50">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent align="end">
+                        {Object.keys(unitMap).map((u, idx) => (
+                            <SelectItem value={u} key={u + idx} className="font-semibold">
+                                {u}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
                 <ReactApexChart
                     type="bar"
                     options={options}

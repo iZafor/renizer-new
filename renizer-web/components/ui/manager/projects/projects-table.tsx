@@ -39,8 +39,7 @@ import { ManagerIdContext } from "@/lib/contexts/manager";
 
 export default function ProjectsTable() {
     const managerId = useContext(ManagerIdContext);
-    const { data: projects } = useQuery(useProjectsQueryOptions(managerId));
-    const data = useMemo(() => projects || [], [projects]);
+    const { data } = useQuery(useProjectsQueryOptions(managerId));
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [pagination, setPagination] = useState<PaginationState>({
@@ -50,8 +49,8 @@ export default function ProjectsTable() {
     const router = useRouter();
 
     const table = useReactTable({
-        data,
         columns,
+        data: data!,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),

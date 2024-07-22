@@ -9,6 +9,7 @@ export type NewProjectFromState =
     | {
           errors?: {
               name?: string[];
+              energySource?: string[];
               description?: string[];
               managerId?: string[];
           };
@@ -24,6 +25,7 @@ export const NewProjectFormSchema = z.object({
             message: "Project name cannot be empty.",
         })
         .default(""),
+    energySource: z.string().min(1, { message: "Energy source cannot be empty." }),
     description: z.string().default("").optional(),
     managerId: z.string().uuid({ message: "Invalid form data." }),
     restrictedToOrganization: z.boolean().optional(),

@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { db, parseToPlainObject, QueryResult } from "@/lib/db";
 import { NewTaskAssigneeFormSchema } from "@/lib/schemas";
 
+// TODO: keep track of hour_taken for the previous assignee 
 export async function PATCH(req: NextRequest) {
     const body = await req.json();
     const validatedData = await NewTaskAssigneeFormSchema.safeParseAsync({
@@ -38,7 +39,7 @@ export async function PATCH(req: NextRequest) {
         await db.query(
             `
             UPDATE Collaboration_Task_T 
-            SET c_p_user_id = ?, assigned_date = ?
+            SET c_p_user_id = ?, assigned_date = ?, hour_taken = 0
             WHERE c_p_user_id = ? AND project_id = ? AND task_name = ? AND assigned_date = ?;
 
             INSERT INTO Collaboration_Task_Collaborator_Update_History_T VALUES (?, ?, ?, ?);

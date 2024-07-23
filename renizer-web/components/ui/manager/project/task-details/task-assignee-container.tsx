@@ -3,7 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import InfoContainer from "./info-container";
 import { TaskPrimaryKey } from "./types";
-import { cn, getInitial } from "@/lib/utils";
+import { getInitial } from "@/lib/utils";
 import { User } from "lucide-react";
 import {
     Popover,
@@ -11,18 +11,16 @@ import {
     PopoverContent,
 } from "@/components/ui/popover";
 import DataTable from "@/components/ui/data-table";
-import { columns } from "../collaborators-table/columns";
-import CollaboratorsTableToolbar from "../collaborators-table/collaborators-table-toolbar";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-    useCollaboratorsDetailsQueryOptions,
-    useProjectTasksQueryOptions,
+    useProjectCollaborationsQueryOptions,
 } from "@/lib/hooks/manager/use-project-query";
-import { useState, useEffect, ForwardedRef, useContext } from "react";
+import { useState, useEffect } from "react";
 import { NewTaskAssigneeFormState } from "@/lib/schemas";
 import { toast } from "sonner";
 import { ProjectTask } from "@/lib/definitions";
-import { ProjectIdContext } from "@/lib/contexts/manager";
+import { columns } from "../collaboration-table/columns";
+import CollaborationTableToolbar from "../collaboration-table/collaboration-table-tollbar";
 
 interface TaskAssigneeContainerProps {
     projectTasksQueryKey: string[];
@@ -40,9 +38,8 @@ export default function TaskAssigneeContainer({
     deliveryDate,
 }: TaskAssigneeContainerProps) {
     const queryClient = useQueryClient();
-    const projectId = useContext(ProjectIdContext);
     const { data } = useQuery(
-        useCollaboratorsDetailsQueryOptions(taskPrimaryKey.projectId)
+        useProjectCollaborationsQueryOptions(taskPrimaryKey.projectId)
     );
     const [open, setOpen] = useState(false);
     const [state, setState] = useState<NewTaskAssigneeFormState>();
@@ -90,6 +87,7 @@ export default function TaskAssigneeContainer({
                                             c_p_user_id: newState.newAssigneeId,
                                             assignee: newState.newAssigneeName,
                                             role: newState.newAssigneeRole,
+                                            hour_taken: 0,
                                             assigned_date: new Date(
                                                 newState?.newAssignedDate!
                                             ),
@@ -161,12 +159,12 @@ export default function TaskAssigneeContainer({
                             </div>
                         </div>
                     </PopoverTrigger>
-                    <PopoverContent align="end" className="min-w-[50rem]">
+                    <PopoverContent align="end" className="min-w-[90rem]">
                         <DataTable
                             data={data!}
                             columns={columns}
-                            toolbar={CollaboratorsTableToolbar}
-                            className="h-[20rem]"
+                            toolbar={CollaborationTableToolbar}
+                            className="h-[26rem]"
                             onRowClicked={(data) =>
                                 newAssigneeMutation.mutate(data.c_p_user_id)
                             }

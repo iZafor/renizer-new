@@ -63,6 +63,8 @@ export interface ProjectCollaboration {
     total_assigned_tasks: number;
     tasks_in_progress: number;
     tasks_completed: number;
+    hourly_rate: number;
+    working_experience: number;
 }
 
 export interface ProjectTask {

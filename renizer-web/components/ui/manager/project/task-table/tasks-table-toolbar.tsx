@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { TableColumnViewOptions } from "@/components/ui/table-column-view-options";
 import { TableFacetedFilter } from "@/components/ui/table-faceted-filter";
 import { priorities, statuses } from "@/lib/data";
+import TaskAssignmentDialog from "./task-assignment-dialog";
 
 interface TasksTableToolbarProps<TData> {
     table: Table<TData>;
@@ -23,7 +24,7 @@ export default function TasksTableToolbar<TData>({
                 <Input
                     placeholder="Filter task/assignee..."
                     onChange={(event) => {
-                        table.setGlobalFilter(event.target.value)
+                        table.setGlobalFilter(event.target.value);
                     }}
                     className="h-8 w-[150px] lg:w-[250px]"
                 />
@@ -53,6 +54,7 @@ export default function TasksTableToolbar<TData>({
                 )}
             </div>
             <div className="flex gap-2">
+                <TaskAssignmentDialog />
                 <TableColumnViewOptions table={table} />
             </div>
         </div>

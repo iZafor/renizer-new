@@ -50,7 +50,7 @@ export async function getCollaboratorsDetails(projectId: string) {
                 Project_Contributor_T AS a
                 INNER JOIN User_T AS b ON a.c_p_user_id = b.user_id
                 INNER JOIN Project_Associate_T AS c ON a.c_p_user_id = c.p_user_id
-                WHERE c_p_user_id IN (
+                WHERE c_p_user_id NOT IN (
                     SELECT DISTINCT(c_p_user_id)
                     FROM Collaboration_T
                     WHERE project_id = '${projectId}'
@@ -72,27 +72,28 @@ export async function getProjectCollaborations(projectId: string) {
             .query<QueryResult[]>(
                 `
             SELECT 
-                a.c_p_user_id, CONCAT(first_name, ' ', last_name) AS name, a.project_id, start_date, end_date, role, COALESCE(COUNT(c.task_name), 0) AS total_assigned_tasks, tasks_in_progress, tasks_completed
+                a.c_p_user_id, CONCAT(first_name, ' ', last_name) AS name, a.project_id, start_date, end_date, role, COUNT(c.task_name) AS total_assigned_tasks, tasks_in_progress, tasks_completed, hourly_rate, working_experience
             FROM 
                 Collaboration_T AS a 
                 INNER JOIN User_T AS b ON a.c_p_user_id = b.user_id
                 LEFT JOIN Collaboration_Task_T AS c ON a.c_p_user_id = c.c_p_user_id AND a.project_id = c.project_id
                 LEFT JOIN (
-                    SELECT project_id, c_p_user_id, COALESCE(COUNT(task_name), 0) AS tasks_in_progress 
+                    SELECT project_id, c_p_user_id, COUNT(task_name) AS tasks_in_progress 
                     FROM Collaboration_Task_T
                     WHERE status = "In Progress"
                     GROUP BY c_p_user_id, project_id
                 ) AS dt1 ON a.c_p_user_id = dt1.c_p_user_id AND a.project_id = dt1.project_id 
                 LEFT JOIN (
-                    SELECT project_id, c_p_user_id, COALESCE(COUNT(task_name), 0) AS tasks_completed 
+                    SELECT project_id, c_p_user_id, COUNT(task_name) AS tasks_completed 
                     FROM Collaboration_Task_T
                     WHERE status = "Completed"
                     GROUP BY c_p_user_id, project_id
                 ) AS dt2 ON a.c_p_user_id = dt2.c_p_user_id AND a.project_id = dt2.project_id
+                INNER JOIN Project_Associate_T AS d ON a.c_p_user_id = d.p_user_id
             WHERE 
                 a.project_id = '${projectId}'
             GROUP BY
-                a.c_p_user_id, role, name, a.project_id, start_date, end_date, tasks_in_progress, tasks_completed
+                a.c_p_user_id, role, name, a.project_id, start_date, end_date, tasks_in_progress, tasks_completed, hourly_rate, working_experience
             ORDER BY
                 start_date DESC;
         `

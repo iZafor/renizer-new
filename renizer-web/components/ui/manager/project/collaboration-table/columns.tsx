@@ -87,4 +87,20 @@ export const columns: ColumnDef<ProjectCollaboration>[] = [
         cell: ({ row }) => <div>{row.getValue("tasks_completed") || "-"}</div>,
         enableGlobalFilter: false,
     },
+    {
+        accessorKey: "hourly_rate",
+        header: ({ column }) => (
+            <TableHeader column={column} title="Hourly Rate" />
+        ),
+        cell: ({ row }) => <div>${row.getValue("hourly_rate") || "-"}</div>,
+        enableGlobalFilter: false,
+    },
+    {
+        accessorKey: "working_experience",
+        header: ({ column }) => (
+            <TableHeader column={column} title="Working Experience (Years)" />
+        ),
+        cell: ({ row }) => <div>{row.getValue("working_experience") || "-"}</div>,
+        enableGlobalFilter: false,
+    },
 ];

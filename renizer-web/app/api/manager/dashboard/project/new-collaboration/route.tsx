@@ -26,8 +26,8 @@ export async function POST(req: NextRequest) {
             FROM Collaboration_T
             WHERE project_id = ? AND role = ?;
 
-            SELECT CONCAT(first_name, ' ', last_name) AS name
-            FROM User_T
+            SELECT CONCAT(first_name, ' ', last_name) AS name, working_experience, hourly_rate
+            FROM User_T AS a INNER JOIN Project_Associate_T AS b ON a.user_id = b.p_user_id 
             WHERE user_id = ?;
             `,
                 [
@@ -54,6 +54,8 @@ export async function POST(req: NextRequest) {
             total_assigned_tasks: 0,
             tasks_in_progress: 0,
             tasks_completed: 0,
+            hourly_rate: res[1][0].hourly_rate,
+            working_experience: res[1][0].working_experience,
         };
         await db.query(
             `

@@ -19,7 +19,7 @@ export default function CollaborationTableToolbar<TData>({
         <div className="flex items-center justify-between">
             <div className="flex flex-1 items-center space-x-2">
                 <Input
-                    placeholder="Filter contributors..."
+                    placeholder="Filter name/role..."
                     onChange={(event) => {
                         table.setGlobalFilter(event.target.value);
                     }}

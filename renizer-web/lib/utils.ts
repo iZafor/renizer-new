@@ -37,10 +37,10 @@ export function formatNumber(val: number) {
         return "0";
     }
     if (val < 1000) {
-        return `${val}`
+        return `${val}`;
     }
     if (val < 1000000) {
-        return `${(val / 1000).toFixed(2)} K`
+        return `${(val / 1000).toFixed(2)} K`;
     }
     if (val < 1000000000) {
         return `${(val / 1000000).toFixed(2)} M`;
@@ -56,4 +56,41 @@ export function getInitial(name: string) {
     return parts.length > 1
         ? parts[0][0] + parts[parts.length - 1][0]
         : name.substring(0, 2);
+}
+
+/**
+ * Checks only the date part skipping the time
+ *
+ * @param date1
+ * @param date2
+ *
+ * @returns true if date1 < date2 otherwise false
+ */
+export function isDateEarlier(date1: Date, date2: Date) {
+    if (date1.getFullYear() < date2.getFullYear()) {
+        return true;
+    }
+    if (date1.getFullYear() > date2.getFullYear()) {
+        return false;
+    }
+    if (date1.getMonth() < date2.getMonth()) {
+        return true;
+    }
+    if (date1.getMonth() > date2.getMonth()) {
+        return false;
+    }
+    if (date1.getDate() < date2.getDate()) {
+        return true;
+    }
+    return false;
+}
+
+export function isNumber(text: string) {
+    if (typeof text === "number") {
+        return true;
+    }
+    if (typeof text !== "string") {
+        return false;
+    }
+    return text ? !isNaN(text as unknown as number) : false;
 }

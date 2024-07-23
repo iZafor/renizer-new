@@ -3,6 +3,7 @@ import {
     Project,
     ProjectCollaboration,
     ProjectInvestment,
+    ProjectTask,
 } from "@/lib/definitions";
 
 export type NewProjectFromState =
@@ -25,7 +26,9 @@ export const NewProjectFormSchema = z.object({
             message: "Project name cannot be empty.",
         })
         .default(""),
-    energySource: z.string().min(1, { message: "Energy source cannot be empty." }),
+    energySource: z
+        .string()
+        .min(1, { message: "Energy source cannot be empty." }),
     description: z.string().default("").optional(),
     managerId: z.string().uuid({ message: "Invalid form data." }),
     restrictedToOrganization: z.boolean().optional(),
@@ -211,4 +214,36 @@ export const NewTaskAssigneeFormSchema = z.object({
     assignedDate: z.date({ message: "Invalid form data." }),
     taskName: z.string().min(1, { message: "Invalid form data." }),
     newAssigneeId: z.string().uuid({ message: "Invalid assignee." }),
+});
+
+export type TaskAssignmentFormState =
+    | {
+          errors?: {
+              projectId?: string[];
+              cpUserId?: string[];
+              taskName?: string[];
+              assignedDate?: string[];
+              expectedHour?: string[];
+              expectedDeliveryDate?: string[];
+              priority?: string[];
+          };
+          message?: string[];
+          task?: ProjectTask;
+      }
+    | undefined;
+
+export const TaskAssignmentFormSchema = z.object({
+    projectId: z.string().uuid({ message: "Invalid form data." }),
+    cpUserId: z.string().uuid({ message: "Invalid form data." }),
+    taskName: z.string().min(1, { message: "Task name cannot be empty." }),
+    assignedDate: z.date({ message: "Invalid form data." }),
+    expectedHour: z
+        .number()
+        .min(0, { message: "Expected hours cannot be negative." }),
+    expectedDeliveryDate: z.date({
+        message: "Invalid expected delivery date.",
+    }),
+    priority: z.enum(["High", "Low", "Medium"], {
+        message: "Invalid priority.",
+    }),
 });

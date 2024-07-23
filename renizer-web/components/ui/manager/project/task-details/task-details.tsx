@@ -72,13 +72,12 @@ export default function TaskDetails({ className, task }: TaskDetailsProps) {
                     projectTasksQueryKey,
                     (old: ProjectTask[]) =>
                         old
-                            ? old.filter(
-                                  (t) =>
-                                      t.c_p_user_id !==
-                                          taskPrimaryKey.cpUserId &&
-                                      t.task !== taskPrimaryKey.taskName &&
-                                      t.assigned_date !==
-                                          taskPrimaryKey.assignedDate
+                            ? old.filter((t) =>
+                                  t.c_p_user_id === taskPrimaryKey.cpUserId
+                                      ? t.task !== taskPrimaryKey.taskName &&
+                                        t.assigned_date !==
+                                            taskPrimaryKey.assignedDate
+                                      : true
                               )
                             : old
                 );
